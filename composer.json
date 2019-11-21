@@ -1,0 +1,49 @@
+{
+    "name": "ht7/ht7-html",
+    "type": "library",
+    "description": "A PHP library to build HTML with OOP.",
+    "keywords": ["php", "ht7", "html"],
+    "homepage": "https://github.com/1stthomas/ht7-html",
+    "license": "GNU General Public License v3.0",
+    "authors": [
+        {
+            "name": "1stthomas",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Ht7\\Html\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {}
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "support": {
+        "source": "https://github.com/1stthomas/ht7-html"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/1stthomas/ht7-base"
+        }
+    ],
+    "require": {
+        "php": "^7.0",
+        "ht7/ht7-base": "dev-master"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.0"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "scripts": {
+        "test": ".\\vendor\\bin\\phpunit --configuration .\\tests\\configuration.xml --testdox",
+        "php1": "php -v"
+    }
+}
