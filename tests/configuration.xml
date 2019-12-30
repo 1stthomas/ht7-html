@@ -5,8 +5,7 @@
     backupGlobals="true"
     backupStaticAttributes="true"
     bootstrap="./bootstrap.php"
-    cacheResult="true"
-    cacheResultFile="./cache_test"
+    cacheResult="false"
     cacheTokens="true"
     colors="true"
     convertErrorsToExceptions="true"
@@ -27,8 +26,14 @@
     verbose="true"
 >
     <filter>
-        <whitelist>
-            <directory suffix="Test.php">./tests</directory>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">../src</directory>
+            <exclude>
+                <directory>../src/Iterators</directory>
+                <directory>../src/Tags</directory>
+                <directory>../src/Widgets</directory>
+                <file>../src/Renderable.php</file>
+            </exclude>
         </whitelist>
     </filter>
     <logging>
@@ -40,7 +45,7 @@
         <ini name="error_reporting" value="E_ALL|E_STRICT" />
     </php>
     <testsuites>
-        <testsuite name="ht7 test - unit">
+        <testsuite name="ht7 html - unit">
             <directory>./unit/</directory>
         </testsuite>
     </testsuites>

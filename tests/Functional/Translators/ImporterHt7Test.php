@@ -9,7 +9,7 @@ use \Ht7\Base\Exceptions\InvalidDatatypeException;
 use \Ht7\Html\Translators\ImporterHt7;
 
 /**
- * Test class for the Ht7 class.
+ * Test class for the ImporterHt7 class.
  *
  * @author      Thomas Pluess
  * @since       0.0.1
