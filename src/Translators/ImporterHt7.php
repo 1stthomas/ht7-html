@@ -14,15 +14,19 @@ use \Ht7\Html\Lists\AttributeList;
 /**
  * This class can transform several kinds of tag definitions into a ht7 tag tree.
  *
- * @todo    Diese Klasse sollte eigentlich Importer oder wenigstens Ht7Importer/ImporterHt7 heissen!
- *          Dann kann auch eine weitere Klasse erstellt werden, die Exporter oder so
- *          heisst.
- *
  * @author Thomas Plüss
  */
 class ImporterHt7
 {
 
+    /**
+     * Get an array of attributes according to the present DOMElement.
+     *
+     * @param   DOMElement  $el         The element to gain the attributes from.
+     * @return  array                   Assoc array with the related attribute
+     *                                  name as key and its attribute value as
+     *                                  array value.
+     */
     public static function getAttributeArrayFromDom(DOMElement $el)
     {
         $attributes = [];
@@ -36,6 +40,13 @@ class ImporterHt7
         return $attributes;
     }
 
+    /**
+     * Get an AttributeList instance with the attribute instance according to
+     * the present DOMElement.
+     *
+     * @param   DOMElement      $el     The element to gain the attributes from.
+     * @return  AttributeList           The list with the found attributes.
+     */
     public static function getAttributeListFromDom(DOMElement $el)
     {
         $attributes = new AttributeList();
@@ -87,6 +98,17 @@ class ImporterHt7
         }
     }
 
+    /**
+     * Build a tag tree from a DOMElement.
+     *
+     * This is a recursive method. It recalls itself until there is no further
+     * DOMElement instance to parse.
+     *
+     * @param   DOMElement  $el         The element to parse.
+     * @param   Tag         $tag        The Tag instance to add the current
+     *                                  element to.
+     * @return  Tag                     The prepared Tag instance.
+     */
     public static function readFromDom(DOMElement $el, Tag $tag = null)
     {
         if (empty($tag)) {
@@ -152,6 +174,17 @@ class ImporterHt7
         return count($els) > 0 ? static::readFromDom($els[0]) : null;
     }
 
+    /**
+     * Create a Node instance according to the datatype of the present element.
+     *
+     * @param   mixed   $el             The present element on which is decided
+     *                                  what has to be done next.
+     *                                  If it is a scalar value, a Text instance
+     *                                  will be created. Otherwise a next
+     *                                  recursive iteration will be released.
+     * @return  mixed                   Text or Tag instance according to the
+     *                                  datatype of the present element.
+     */
     protected static function createContentElement($el)
     {
         if (is_scalar($el)) {
@@ -161,6 +194,14 @@ class ImporterHt7
         }
     }
 
+    /**
+     * Get the starting tag of the present HTML string.
+     *
+     * @param   string  $html           The HTML string to search the starting
+     *                                  tag.
+     * @return  string|null             A string of the found tag name, or null
+     *                                  if no tag could be found.
+     */
     protected static function getStartingTag($html)
     {
         $matches = [];
@@ -170,6 +211,13 @@ class ImporterHt7
         return count($matches) > 1 ? $matches[1] : null;
     }
 
+    /**
+     * Search for a specific tag in a HTML string.
+     *
+     * @param   string  $html           The haystack.
+     * @param   string  $tag            The HTML tag to find.
+     * @return  boolean                 True if the tag in question could be found.
+     */
     protected static function hasTagInString($html, $tag)
     {
         return preg_match("/\s*?" . $tag . "\b[^>]*>/", $html) === 1 ? true : false;

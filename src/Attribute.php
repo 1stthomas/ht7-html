@@ -56,7 +56,7 @@ class Attribute implements HashListable, Renderable
     }
 
     /**
-     * @Override
+     * @Overridden
      */
     public function getHash()
     {
