@@ -8,51 +8,35 @@
 
 namespace Ht7\Html;
 
+use \BadMethodCallException;
+use \InvalidArgumentException;
+use \IteratorAggregate;
+use \Ht7\Base\Exceptions\InvalidDatatypeException;
+use \Ht7\Html\Iterators\PreOrderIterator;
+use \Ht7\Html\Lists\AttributeList;
+use \Ht7\Html\Lists\NodeList;
+use \Ht7\Html\Models\SelfClosing;
+
 /**
  * Description of Tag
  *
- * @author 1stthomas
+ * @author Thomas Pluess
  */
-use \InvalidArgumentException;
-
-class Tag
+class Tag extends Node implements IteratorAggregate
 {
 
     /**
-     * @var     array       An indexed array of Attribute instances.
+     * @var     AttributeList
      */
-    protected $attributes = [];
+    protected $attributes;
 
     /**
      * The content of the current HTML element.
      *
-     * @var     mixed       The content must be one of the following data types:
-     *                      string, int, float or an indexed array of string or
-     *                      Html-elements of this class.
+     * @var     NodeList    The content of the current tag, which can be a Text-
+     *                      or a Tag-instance.
      */
     protected $content;
-
-    /**
-     * @var     array       Indexed array of self closing HTML tags.
-     * @see                 https://developer.mozilla.org/en-US/docs/Glossary/Empty_element
-     */
-    protected static $selfClosingTags = [
-        'area',
-        'base',
-        'br',
-        'col',
-        'embed',
-        'hr',
-        'img',
-        'input',
-        'keygen',
-        'link',
-        'meta',
-        'param',
-        'source',
-        'track',
-        'wbr'
-    ];
 
     /**
      * @var     string      The name of the current HTML element.
@@ -63,12 +47,10 @@ class Tag
      * Create an instance of the Tag class.
      *
      * @param   string  $tagName            The name of the current tag.
-     * @param   mixed   $content            One of the following datatypes:
-     *                                      string, int, float or an indexed
-     *                                      array of Tag instances.
+     * @param   mixed   $content            The content of the current Tag instance.
      * @param   array   $attributes         Indexed array of Attribute instances.
      */
-    public function __construct($tagName = 'div', $content = '', array $attributes = [])
+    public function __construct($tagName = 'div', $content = [], array $attributes = [])
     {
         $this->setTagName($tagName);
         $this->setContent($content);
@@ -84,7 +66,7 @@ class Tag
     public function __toString()
     {
         $tagName = $this->getTagName();
-        $attrStr = $this->getAttributes();
+        $attrStr = (string) $this->getAttributes();
         $attrStrSanitized = empty($attrStr) ? '' : ' ' . $attrStr;
 
         if ($this->isSelfClosing()) {
@@ -99,94 +81,35 @@ class Tag
     }
 
     /**
-     * Add an attribute instance to the attribute array of the current tag instance.
-     *
-     * @param   Attribute   $attribute      The attribute to be added.
-     * @return  Tag
-     */
-    public function addAttribute(Attribute $attribute)
-    {
-        $this->attributes[$attribute->getName()] = $attribute;
-
-        return $this;
-    }
-
-    /**
-     * Add an attribute to the current attribute instance.
-     *
-     * @param   string  $name           The attribute name.
-     * @param   mixed   $value          The attribute value as string, int or float
-     * @return  Tag
-     */
-    public function addAttributePlain($name, $value)
-    {
-        $this->attributes[$name] = new Attribute($name, $value);
-
-        return $this;
-    }
-
-    /**
      * Get the defined attributes of the current tag instance.
      *
-     * @param   string  $outputType     For "str" or "string" the returned
-     *                                  attributes will be a related string.
-     *                                  Otherwise a string representation of the
-     *                                  defined attributes will be returned.
-     * @return  mixed                   String or indexed array.
+     * @return  AttributeList           The attributes of the present tag.
      */
-    public function getAttributes($outputType = 'str')
+    public function getAttributes()
     {
-        ksort($this->attributes);
-        $attributes = $this->attributes;
-
-        if ($outputType === 'str' || $outputType === 'string') {
-            $attributes = implode(' ', $this->attributes);
-        }
-
-        return $attributes;
+        return $this->attributes;
     }
 
     /**
      * Get the content of the current HTML element.
      *
-     * @param   string      $outputType     'str' if possible Html-instances should
-     *                                      be transformed into a string. Otherwise
-     *                                      no trransformation will be performed.
-     * @return  mixed                       The content of the current HTML element.
+     * @return  NodeList                The content of the current HTML element.
      */
-    public function getContent($outputType = 'str')
+    public function getContent()
     {
-        $content = $this->content;
-
-        if ($outputType === 'str') {
-            if (is_array($this->content)) {
-                $content = '';
-
-                foreach ($this->content as $item) {
-                    $content .= '' . $item;
-                }
-            }
-        }
-
-        return $content;
-    }
-
-    public function getIterator()
-    {
-        // @todo.....
-        // see https://www.php.net/manual/en/class.iterator.php
-        // kann dann mittels array_search(array_keys($content od $attr), $term)
-        // ein element finden oder nur mi array_keys die jeweilige position abspeichern.
+        return $this->content;
     }
 
     /**
-     * Get a list of all self closing elements.
+     * Get an iterator instance to iterate the current Tag.
      *
-     * @return  array           Indexed array of all self closing tag names.
+     * This method is called by using the foreach loop over a Tag instance.
+     *
+     * @return  Iterator
      */
-    public static function getSelfClosingTags()
+    public function getIterator()
     {
-        return self::$selfClosingTags;
+        return $this->getIteratorPreOrder();
     }
 
     /**
@@ -200,14 +123,43 @@ class Tag
     }
 
     /**
+     * Get a tree iterator which goes first every tree up before searching the
+     * next.
+     */
+    public function getTreeIteratorHorizontal()
+    {
+
+    }
+
+    /**
+     * Get a tree iterator which searches first every sibling before going up to
+     * the next level.
+     */
+    public function getIteratorPreOrder()
+    {
+        return new PreOrderIterator($this);
+    }
+
+    /**
      * Whetever the current tag is self closing or not.
      *
      * @return  boolean         True if the current element is self closing.
      */
     public function isSelfClosing()
     {
-        return in_array($this->getTagName(), self::getSelfClosingTags());
+        return SelfClosing::is($this->getTagName());
     }
+
+//
+//    /**
+//     *
+//     * @param   string  $json               The JSON string to transfer.
+//     * @return  Tag                         The Tag tree.
+//     */
+//    public static function readFromJsonString($json)
+//    {
+//
+//    }
 
     /**
      * Set the attributes of the current HTML element.
@@ -216,62 +168,43 @@ class Tag
      *                                      <code>\Ht7\Html\Attribute</code>
      *                                      instances.
      */
-    public function setAttributes(array $attributes)
+    public function setAttributes($attributes)
     {
-        if (empty($attributes)) {
-            $this->attributes = [];
-        } elseif (gettype(array_keys($attributes)[0]) === 'integer') {
-            foreach ($attributes as $attr) {
-                if ($attr instanceof Attribute) {
-                    $this->addAttribute($attr);
-                } else {
-                    throw new BadMethodCallException('Unsupported');
-                }
-            }
+        if ($attributes instanceof AttributeList) {
+            $this->attributes = $attributes;
+        } elseif (is_array($attributes)) {
+            $this->attributes = new AttributeList($attributes);
         } else {
-            $this->setAttributesPlain($attributes);
-        }
-    }
-
-    /**
-     * Set the attributes of the current HTML element.
-     *
-     * @param   array   $attributes         Assoc array with the attribute name
-     *                                      as key and the attribute value as value.
-     */
-    public function setAttributesPlain(array $attributes)
-    {
-        // Empty the existing ones.
-        $this->attributes = [];
-
-        foreach ($attributes as $name => $value) {
-            $this->addAttributePlain($name, $value);
+            throw new InvalidDatatypeException(
+                    'attributes',
+                    $attributes,
+                    ['array'],
+                    [NodeList::class]
+            );
         }
     }
 
     /**
      * Set the inner content of the current tag.
      *
-     * The content will not be considered if the current tag is self closing.
+     * This method will throw an exception if the current tag is self closing.
      *
-     * @param   mixed       $content        Allowed data types: string, int, float,
-     *                                      array. If the content is an array, its
-     *                                      items must be a string or an instance
-     *                                      of this class.
+     * @param   array       $content        The content of the current Tag
+     *                                      instance.
+     * @throws  BadMethodCallException
      * @throws  InvalidArgumentException
      */
     public function setContent($content)
     {
-        if (is_string($content) || is_int($content) || is_float($content)) {
-            $this->content = '' . $content;
-        } elseif (is_array($content)) {
-            $this->content = $content;
-        } else {
-            $msg = 'The content must be a string, int, float or array, found %s.';
-            $e = sprintf($msg, gettype($content));
+        if (!empty($content) && $this->isSelfClosing()) {
+            $msg = 'This tag (%s) can not have content, because it is self'
+                    . ' closing.';
+            $e = sprintf($msg, gettype($this->getTagName()));
 
-            throw new InvalidArgumentException($e);
+            throw new BadMethodCallException($e);
         }
+
+        $this->content = $content instanceof NodeList ? $content : new NodeList($content);
     }
 
     /**
@@ -285,11 +218,9 @@ class Tag
         if (is_string($name)) {
             $this->tagName = $name;
         } else {
-            $msg = 'The tag name must be a string, found %s.';
-            $e = sprintf($msg, gettype($name));
-
-            throw new InvalidArgumentException($e);
+            throw new InvalidDatatypeException('tag name', $name, ['string']);
         }
     }
 
+    // toArray()??
 }
