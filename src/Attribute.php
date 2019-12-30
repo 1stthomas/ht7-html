@@ -9,13 +9,15 @@
 namespace Ht7\Html;
 
 use \InvalidArgumentException;
+use \Ht7\Base\Lists\HashListable;
+use \Ht7\Html\Renderable;
 
 /**
  * Description of Attribute
  *
  * @author 1stthomas
  */
-class Attribute
+class Attribute implements HashListable, Renderable
 {
 
     /**
@@ -51,6 +53,14 @@ class Attribute
         $value = $this->getValue();
 
         return $this->getName() . ($value === '' ? '' : '="' . $value . '"');
+    }
+
+    /**
+     * @Override
+     */
+    public function getHash()
+    {
+        return $this->getName();
     }
 
     /**
