@@ -8,7 +8,8 @@ use \Ht7\Html\Text;
 use \Ht7\Html\Translators\ImporterHt7;
 
 /**
- * Description of ItemList
+ * The NodeList class is a list of <code>\Ht7\Html\Tag</code> and
+ * <code>\Ht7\Html\Text</code> instances.
  *
  * @author Thomas Plüss
  */
@@ -34,13 +35,6 @@ class NodeList extends AbstractRenderableList
         }
 
         return $this;
-    }
-
-    public function load(array $data)
-    {
-        foreach ($data as $item) {
-            $this->add($item);
-        }
     }
 
 }

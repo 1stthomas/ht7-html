@@ -20,18 +20,13 @@ class Text extends Node
 {
 
     /**
-     * @var     string      The attribute name.
-     */
-    protected $text = '';
-
-    /**
      * Create an instance of the text element.
      *
      * @param   string  $text           The content.
      */
     public function __construct($text)
     {
-        $this->setText($text);
+        $this->setContent($text);
     }
 
     /**
@@ -41,17 +36,17 @@ class Text extends Node
      */
     public function __toString()
     {
-        return $this->getText();
+        return $this->getContent();
     }
 
     /**
      * Get the content.
      *
-     * @return  string                  The content of this element.
+     * @return  string                  The content of the current text element.
      */
-    public function getText()
+    public function getContent()
     {
-        return $this->text;
+        return parent::getContent();
     }
 
     /**
@@ -65,10 +60,10 @@ class Text extends Node
      * @param   string  $text           The content.
      * @throws  InvalidArgumentException
      */
-    public function setText($text)
+    public function setContent($text)
     {
         if (is_scalar($text)) {
-            $this->text = (string) $text;
+            $this->content = (string) $text;
         } else {
             throw new InvalidDatatypeException('the text content', $text, ['scalar']);
         }

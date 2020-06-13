@@ -162,7 +162,7 @@ class PreOrderIterator implements Iterator
         $this->current = $this->children[count($this->children) - 1]
                 ->get($this->getPosition());
         $this->inkrement();
-        $this->children[] = method_exists($this->current, 'getContent') ? $this->current->getContent() : null;
+        $this->children[] = $this->current instanceof Tag ? $this->current->getContent() : null;
         $this->position[] = 0;
     }
 

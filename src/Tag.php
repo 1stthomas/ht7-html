@@ -18,7 +18,14 @@ use \Ht7\Html\Lists\NodeList;
 use \Ht7\Html\Models\SelfClosing;
 
 /**
- * Description of Tag
+ * This class can build DOM like trees. To traverse them, there are two iterators:
+ * - PostOrderIterator
+ * - PreOrderIterator
+ *
+ * To build such a kind of DOM tree by an array, use:
+ * <code>Ht7\Html\Translators\ImporterHt7::readFromArray($array)</code>. This
+ * <code>ImporterHt7</code> class can also transform a DOMElement-tree into an
+ * instance of the Tag class.
  *
  * @author Thomas Pluess
  */
@@ -97,7 +104,7 @@ class Tag extends Node implements IteratorAggregate
      */
     public function getContent()
     {
-        return $this->content;
+        return parent::getContent();
     }
 
     /**
@@ -164,9 +171,10 @@ class Tag extends Node implements IteratorAggregate
     /**
      * Set the attributes of the current HTML element.
      *
-     * @param   array   $attributes         Indexed array of
+     * @param   mixed   $attributes         Indexed array of
      *                                      <code>\Ht7\Html\Attribute</code>
-     *                                      instances.
+     *                                      instances or an instance of
+     *                                      <code>AttributeList</code>.
      */
     public function setAttributes($attributes)
     {
@@ -187,10 +195,15 @@ class Tag extends Node implements IteratorAggregate
     /**
      * Set the inner content of the current tag.
      *
-     * This method will throw an exception if the current tag is self closing.
+     * This method will throw an exception if the current tag is self closing
+     * and the content is not empty.
+     * If the content is not an instance of the NodeList class, a new NodeList
+     * will be created. In this case the input validation will be delegated to
+     * the NodeList.
      *
-     * @param   array       $content        The content of the current Tag
-     *                                      instance.
+     * @param   mixed       $content        The content of the current Tag
+     *                                      instance. This must be a NodeList
+     *                                      instance or an array.
      * @throws  BadMethodCallException
      * @throws  InvalidArgumentException
      */

@@ -64,14 +64,14 @@ class ImporterHt7
      * Build a tag tree from an array.
      *
      * E.g.
-     * <code>
+     * <pre><code>
      * $arr = [
      *     'tag' => 'div',
      *     'content' => ['simple text'],
      *     'attributes' => ['class' => 'btn', 'id' => 'btn-123']
      * ];
-     * </code>
-     * will produce <code>\<div>simple text<\/div></code>
+     * </code></pre>
+     * will produce <code>\<div class="btn" id="btn-123">simple text<\/div></code>
      *
      * @param   array   $arr
      * @return  Tag
