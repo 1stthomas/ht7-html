@@ -13,7 +13,7 @@ use \Ht7\Html\Renderable;
  *
  * @author Thomas Plüss
  */
-class AttributeList extends HashList implements Renderable
+class AttributeList extends HashList implements \JsonSerializable, Renderable
 {
 
     /**
@@ -80,6 +80,21 @@ class AttributeList extends HashList implements Renderable
         }
 
         return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        $items = [];
+        $all = $this->getAll();
+
+        foreach ($all as $item) {
+            $items[$item->getName()] = $item->getValue();
+        }
+
+        return $items;
     }
 
     /**

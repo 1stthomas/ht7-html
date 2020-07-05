@@ -4,6 +4,7 @@ namespace Ht7\Html\Lists;
 
 use \Ht7\Base\Exceptions\InvalidDatatypeException;
 use \Ht7\Html\Node;
+use \Ht7\Html\Tag;
 use \Ht7\Html\Text;
 use \Ht7\Html\Translators\ImporterHt7;
 
@@ -13,11 +14,11 @@ use \Ht7\Html\Translators\ImporterHt7;
  *
  * @author Thomas Plüss
  */
-class NodeList extends AbstractRenderableList
+class NodeList extends AbstractRenderableList implements \JsonSerializable
 {
 
     /**
-     * @Overriden
+     * {@inheritdoc}
      */
     public function add($item)
     {
@@ -31,10 +32,30 @@ class NodeList extends AbstractRenderableList
 
             parent::add((new Text($item)));
         } else {
+            print_r(json_encode($this));
             throw new InvalidDatatypeException('The content', $item, ['scalar', 'array'], [Node::class]);
         }
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        $items = [];
+        $all = $this->getAll();
+
+        foreach ($all as $item) {
+            if ($item instanceof Text) {
+                $items[] = $item->getContent();
+            } elseif ($item instanceof Tag) {
+                $items[] = $item->jsonSerialize();
+            }
+        }
+
+        return $items;
     }
 
 }

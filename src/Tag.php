@@ -29,7 +29,7 @@ use \Ht7\Html\Models\SelfClosing;
  *
  * @author Thomas Pluess
  */
-class Tag extends Node implements IteratorAggregate
+class Tag extends Node implements \JsonSerializable, IteratorAggregate
 {
 
     /**
@@ -157,16 +157,17 @@ class Tag extends Node implements IteratorAggregate
         return SelfClosing::is($this->getTagName());
     }
 
-//
-//    /**
-//     *
-//     * @param   string  $json               The JSON string to transfer.
-//     * @return  Tag                         The Tag tree.
-//     */
-//    public static function readFromJsonString($json)
-//    {
-//
-//    }
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'attributes' => $this->getAttributes()->jsonSerialize(),
+            'content' => $this->getContent()->jsonSerialize(),
+            'tag' => $this->tagName
+        ];
+    }
 
     /**
      * Set the attributes of the current HTML element.
