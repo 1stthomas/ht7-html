@@ -86,13 +86,17 @@ class ImporterHt7
             $els = isset($arr['content']) ? $arr['content'] : [];
             $content = [];
 
-            foreach ($els as $el) {
-                $content[] = static::createContentElement($el);
+            if (is_array($els)) {
+                foreach ($els as $el) {
+                    $content[] = static::createContentElement($el);
+                }
+            } else {
+                $content[] = static::createContentElement($els);
             }
 
             return new Tag($arr['tag'], $content, $attributes);
         } else {
-            $e = 'The definition "tag" is missing.';
+            $e = 'The "tag" definition is missing.';
 
             throw new InvalidArgumentException($e);
         }
