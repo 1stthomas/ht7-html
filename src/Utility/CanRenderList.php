@@ -2,9 +2,7 @@
 
 namespace Ht7\Html\Utility;
 
-use \InvalidArgumentException;
-use \Ht7\Base\Validation\ExceptionTrigger;
-use \Ht7\Base\Validation\ExceptionMessagePointer;
+use \Ht7\Base\Exceptions\InvalidDatatypeException;
 
 /**
  *
@@ -25,15 +23,7 @@ trait CanRenderList
         if (is_string($divider)) {
             $this->divider = $divider;
         } else {
-            ExceptionTrigger::trigger(
-                    ExceptionMessagePointer::WRONG_DATATYPE,
-                    ['The test', 'string', 'object']
-            );
-
-//            $msg = 'The divider needs to be a string, found %s.';
-//            $e = sprintf($msg, gettype($divider));
-//
-//            throw new InvalidArgumentException($e);
+            throw new InvalidDatatypeException('tag name', $divider, ['string']);
         }
     }
 

@@ -51,4 +51,36 @@ class NodeListTest extends TestCase
         $this->object->add(new \stdClass());
     }
 
+    public function testJsonEncode()
+    {
+        $data = [
+            (new Text('test 1')),
+            (new Text('test 2')),
+            (new Tag('div', ['test 3']))
+        ];
+        $nL = new NodeList($data);
+
+        $expected = '["test 1","test 2",';
+        $expected .= '{"attributes":[],"content":["test 3"],"tag":"div"}]';
+
+        $actual = json_encode($nL);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testSetDivider()
+    {
+        $nL = new NodeList(['t1', 't2']);
+        $nL->setDivider(';');
+
+        $expected = 't1;t2';
+        $actual = '' . $nL;
+
+        $this->assertEquals($expected, $actual);
+
+        $this->expectException(InvalidDatatypeException::class);
+
+        $nL->setDivider([]);
+    }
+
 }

@@ -157,6 +157,24 @@ class ImporterHt7Test extends TestCase
                     ]
                 ]
             ],
+            'test3' => [
+                [
+                    'expected' => [
+                        '<div class="btn">',
+                        '<span>inner span</span></div>'
+                    ],
+                    'test' => [
+                        'tag' => 'div',
+                        'content' => [
+                            [
+                                'tag' => 'span',
+                                'content' => 'inner span'
+                            ]
+                        ],
+                        'attributes' => ['class' => 'btn']
+                    ]
+                ]
+            ],
             'test_empty' => [
                 [
                     'test' => []

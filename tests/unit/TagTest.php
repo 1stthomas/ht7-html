@@ -50,6 +50,55 @@ class TagTest extends TestCase
         $this->assertTrue($tag->isSelfClosing());
     }
 
+    public function testGetAttributes()
+    {
+        $this->assertInstanceOf(AttributeList::class, $this->object->getAttributes());
+    }
+
+    public function testEmptyTag()
+    {
+        $tag = new Tag();
+
+        $expected = '<div></div>';
+        $actual = '' . $tag;
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testGetContent()
+    {
+        $this->assertInstanceOf(NodeList::class, $this->object->getContent());
+    }
+
+    public function testJsonSerialize()
+    {
+        $attr = [
+            'class' => 'btn btn-primary',
+            'required'
+        ];
+        $content = ['testtest..'];
+
+        $tag = new Tag('div', $content, $attr);
+
+        $expected = [
+            'attributes' => ['class' => 'btn btn-primary', 'required' => ''],
+            'content' => ['testtest..'],
+            'tag' => 'div'
+        ];
+
+        $actual = $tag->jsonSerialize();
+
+        $this->assertEquals($expected, $actual);
+
+        $expected2 = '{"attributes":{"class":"btn btn-primary","required":""},';
+        $expected2 .= '"content":["testtest.."],';
+        $expected2 .= '"tag":"div"}';
+
+        $actual2 = json_encode($tag);
+
+        $this->assertEquals($expected2, $actual2);
+    }
+
     public function testRender()
     {
         $attr = [
@@ -65,16 +114,6 @@ class TagTest extends TestCase
         $actual = (string) $tag;
 
         $this->assertEquals($expected, $actual);
-    }
-
-    public function testGetAttributes()
-    {
-        $this->assertInstanceOf(AttributeList::class, $this->object->getAttributes());
-    }
-
-    public function testGetContent()
-    {
-        $this->assertInstanceOf(NodeList::class, $this->object->getContent());
     }
 
     public function testSelfClosingTag()

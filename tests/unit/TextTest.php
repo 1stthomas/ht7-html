@@ -24,8 +24,8 @@ class TextTest extends TestCase
 
         $text = new Text($str);
 
-        $this->assertIsString($text->getText());
-        $this->assertEquals($str, $text->getText());
+        $this->assertIsString($text->getContent());
+        $this->assertEquals($str, $text->getContent());
     }
 
     public function testRender()

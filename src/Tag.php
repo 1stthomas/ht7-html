@@ -133,10 +133,10 @@ class Tag extends Node implements \JsonSerializable, IteratorAggregate
      * Get a tree iterator which goes first every tree up before searching the
      * next.
      */
-    public function getTreeIteratorHorizontal()
-    {
-
-    }
+//    public function getTreeIteratorHorizontal()
+//    {
+//
+//    }
 
     /**
      * Get a tree iterator which searches first every sibling before going up to
