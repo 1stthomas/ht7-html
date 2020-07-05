@@ -5,7 +5,7 @@ namespace Ht7\Html\Lists;
 use \InvalidArgumentException;
 use \Ht7\Base\Lists\HashList;
 use \Ht7\Html\Attribute;
-use \Ht7\Html\Utility\CanRenderList;
+use \Ht7\Html\Utilities\CanRenderList;
 use \Ht7\Html\Renderable;
 
 /**
