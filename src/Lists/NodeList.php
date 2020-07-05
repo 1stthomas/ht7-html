@@ -32,7 +32,6 @@ class NodeList extends AbstractRenderableList implements \JsonSerializable
 
             parent::add((new Text($item)));
         } else {
-            print_r(json_encode($this));
             throw new InvalidDatatypeException('The content', $item, ['scalar', 'array'], [Node::class]);
         }
 
