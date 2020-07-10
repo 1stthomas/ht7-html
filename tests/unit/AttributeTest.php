@@ -18,94 +18,106 @@ use \Ht7\Html\Attribute;
 class AttributeTest extends TestCase
 {
 
-    private $object;
-
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
-    protected function setUp()
-    {
-//        $this->object = new Tag();
-    }
-
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
-
-    }
-
     public function testConstructor()
     {
-        $attr = new Attribute('class', 'btn btn-alert');
+        // see: http://miljar.github.io/blog/2013/12/20/phpunit-testing-the-constructor/
+        $className = Attribute::class;
+        $name = 'class';
+        $value = 'btn btn-primary';
 
-        $this->assertInstanceOf(Attribute::class, $attr);
+        $mock = $this->getMockBuilder($className)
+                ->setMethods(['setName', 'setValue'])
+                ->disableOriginalConstructor()
+                ->getMock();
 
-        return $attr;
+        $mock->expects($this->once())
+                ->method('setName')
+                ->with($this->equalTo($name));
+        $mock->expects($this->once())
+                ->method('setValue')
+                ->with($this->equalTo($value));
+
+        $reflectedClass = new \ReflectionClass($className);
+        $constructor = $reflectedClass->getConstructor();
+        $constructor->invoke($mock, $name, $value);
     }
 
-    /**
-     * @depends testConstructor
-     */
-    public function testRender(Attribute $attr)
+    public function testSetNameWithException()
     {
-        $actual = (string) $attr;
-        $expected = 'class="btn btn-alert"';
+        $mock = $this->getMockBuilder(Attribute::class)
+                ->setMethods(['setValue']) // Without this, an exception would not been thrown.
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $this->expectException(InvalidArgumentException::class);
+
+        $mock->setName((new stdClass()));
+    }
+
+    public function testSetNameEmptyWithException()
+    {
+        $mock = $this->getMockBuilder(Attribute::class)
+                ->setMethods(['setValue']) // Without this, an exception would not been thrown.
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $this->expectException(InvalidArgumentException::class);
+
+        $mock->setName('');
+    }
+
+    public function testSetValueWithException()
+    {
+        $mock = $this->getMockBuilder(Attribute::class)
+                ->setMethods(['setName']) // Without this, an exception would not been thrown.
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $this->expectException(InvalidArgumentException::class);
+
+        $mock->setValue((new stdClass()));
+    }
+
+    public function testToString()
+    {
+        $mock = $this->getMockBuilder(Attribute::class)
+                ->setMethods(['getName', 'getValue'])
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $mock->expects($this->once())
+                ->method('getName')
+                ->willReturn('class');
+        $mock->expects($this->once())
+                ->method('getValue')
+                ->willReturn('btn btn-primary');
+
+
+        $actual = (string) $mock;
+        $expected = 'class="btn btn-primary"';
 
         $this->assertEquals($expected, $actual);
-
-        return $attr;
     }
 
-    /**
-     * @depends testRender
-     */
-    public function testSetName(Attribute $attr)
+    public function testToStringNoValue()
     {
-        $attr->setName('test');
+        $mock = $this->getMockBuilder(Attribute::class)
+                ->setMethods(['getName', 'getValue'])
+                ->disableOriginalConstructor()
+                ->getMock();
 
-        $this->assertEquals('test', $attr->getName());
+        $mock->expects($this->once())
+                ->method('getName')
+                ->willReturn('required');
+        $mock->expects($this->once())
+                ->method('getValue')
+                ->willReturn('');
 
-        return $attr;
-    }
 
-    /**
-     * @depends testRender
-     */
-    public function testSetNameEmpty(Attribute $attr)
-    {
-        $this->expectException(InvalidArgumentException::class);
+        $actual = (string) $mock;
+        $expected = 'required';
 
-        $attr->setName('');
-
-        return $attr;
-    }
-
-    /**
-     * @depends testRender
-     */
-    public function testSetNameNotString(Attribute $attr)
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        $attr->setName(100.33);
-
-        return $attr;
-    }
-
-    /**
-     * @depends testSetName
-     */
-    public function testSetValueWithException(Attribute $attr)
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        $attr->setValue((new stdClass()));
-
-        return $attr;
+        $this->assertEquals($expected, $actual);
     }
 
 }

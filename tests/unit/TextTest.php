@@ -28,13 +28,20 @@ class TextTest extends TestCase
         $this->assertEquals($str, $text->getContent());
     }
 
-    public function testRender()
+    public function testToString()
     {
-        $str = 'testtest';
+        $expected = 'test text.';
 
-        $actual = (string) (new Text($str));
+        $text = $this->getMockBuilder(Text::class)
+                ->setMethods(['getContent'])
+                ->disableOriginalConstructor()
+                ->getMock();
 
-        $this->assertEquals($str, $actual);
+        $text->expects($this->once())
+                ->method('getContent')
+                ->willReturn($expected);
+
+        $this->assertEquals($expected, ((string) $text));
     }
 
     public function testWithException()

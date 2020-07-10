@@ -141,6 +141,8 @@ class Tag extends Node implements \JsonSerializable, IteratorAggregate
     /**
      * Get a tree iterator which searches first every sibling before going up to
      * the next level.
+     *
+     * @return PreOrderIterator
      */
     public function getIteratorPreOrder()
     {
@@ -165,7 +167,7 @@ class Tag extends Node implements \JsonSerializable, IteratorAggregate
         return [
             'attributes' => $this->getAttributes()->jsonSerialize(),
             'content' => $this->getContent()->jsonSerialize(),
-            'tag' => $this->tagName
+            'tag' => $this->getTagName()
         ];
     }
 
@@ -236,5 +238,4 @@ class Tag extends Node implements \JsonSerializable, IteratorAggregate
         }
     }
 
-    // toArray()??
 }
