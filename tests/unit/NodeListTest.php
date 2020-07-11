@@ -2,10 +2,9 @@
 
 namespace Ht7\Base\Tests;
 
-use \InvalidArgumentException;
-use \stdClass;
 use \PHPUnit\Framework\TestCase;
 use \Ht7\Base\Exceptions\InvalidDatatypeException;
+use \Ht7\Html\Attribute;
 use \Ht7\Html\Tag;
 use \Ht7\Html\Text;
 use \Ht7\Html\Lists\NodeList;
@@ -21,66 +20,109 @@ use \Ht7\Html\Lists\NodeList;
 class NodeListTest extends TestCase
 {
 
-    private $object;
-
-    protected function setUp()
+    public function testConstructor()
     {
-        $this->object = new NodeList();
-    }
+        $className = NodeList::class;
+        $items = ['test text'];
 
-    protected function tearDown()
-    {
+        $mock = $this->getMockBuilder($className)
+                ->setMethods(['load'])
+                ->disableOriginalConstructor()
+                ->getMock();
 
+        $mock->expects($this->once())
+                ->method('load')
+                ->with($this->equalTo($items));
+
+        $reflectedClass = new \ReflectionClass($className);
+        $constructor = $reflectedClass->getConstructor();
+        $constructor->invoke($mock, $items);
     }
 
     public function testAdd()
     {
-        $this->object->add('test string');
-        $this->object->add(new Tag());
-        $this->object->add(new Text('simple text text.'));
-        $this->object->add([
-            'attributes' => ['class' => 'btn'],
-            'content' => ['string'],
-            'tag' => 'div'
-        ]);
+        $className = NodeList::class;
 
-        $this->assertCount(4, $this->object);
+        $mock = $this->getMockBuilder($className)
+                ->setMethods(['setTagName', 'setContent', 'setAttributes'])
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $reflectedClass = new \ReflectionClass($className);
+        $property = $reflectedClass->getProperty('items');
+        $property->setAccessible(true);
+
+        $text = $this->createMock(Text::class);
+        $mock->add($text);
+
+        $this->assertCount(1, $property->getValue($mock));
+
+        $arr = ['tag' => 'div'];
+        $mock->add($arr);
+
+        $this->assertCount(2, $property->getValue($mock));
+
+        $plain = 'text plain';
+        $mock->add($plain);
+
+        $this->assertCount(3, $property->getValue($mock));
 
         $this->expectException(InvalidDatatypeException::class);
 
-        $this->object->add(new \stdClass());
+        $mock->add((new NodeList()));
     }
 
     public function testJsonEncode()
     {
-        $data = [
-            (new Text('test 1')),
-            (new Text('test 2')),
-            (new Tag('div', ['test 3']))
+        $node1 = $this->getMockBuilder(Text::class)
+                ->setMethods(['jsonSerialize'])
+                ->disableOriginalConstructor()
+                ->getMock();
+        $node1->expects($this->once())
+                ->method('jsonSerialize')
+                ->willReturn('test text 1');
+
+        $node2 = $this->getMockBuilder(Tag::class)
+                ->setMethods(['jsonSerialize'])
+                ->disableOriginalConstructor()
+                ->getMock();
+        $node2->expects($this->once())
+                ->method('jsonSerialize')
+                ->willReturn(['attributes' => ['class' => 'btn'], 'content' => ['inner text'], 'tag' => 'div']);
+
+        $node3 = $this->getMockBuilder(Text::class)
+                ->setMethods(['jsonSerialize'])
+                ->disableOriginalConstructor()
+                ->getMock();
+        $node3->expects($this->once())
+                ->method('jsonSerialize')
+                ->willReturn('test text 2');
+
+        $data = [$node1, $node2, $node3];
+        $className = NodeList::class;
+
+        $mock = $this->getMockBuilder($className)
+                ->setMethods(['load'])
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $reflectedClass = new \ReflectionClass($className);
+        $property = $reflectedClass->getProperty('items');
+        $property->setAccessible(true);
+
+        $property->setValue($mock, $data);
+
+        $expected = [
+            'test text 1',
+            [
+                'attributes' => ['class' => 'btn'],
+                'content' => ['inner text'],
+                'tag' => 'div'
+            ],
+            'test text 2'
         ];
-        $nL = new NodeList($data);
 
-        $expected = '["test 1","test 2",';
-        $expected .= '{"attributes":[],"content":["test 3"],"tag":"div"}]';
-
-        $actual = json_encode($nL);
-
-        $this->assertEquals($expected, $actual);
-    }
-
-    public function testSetDivider()
-    {
-        $nL = new NodeList(['t1', 't2']);
-        $nL->setDivider(';');
-
-        $expected = 't1;t2';
-        $actual = '' . $nL;
-
-        $this->assertEquals($expected, $actual);
-
-        $this->expectException(InvalidDatatypeException::class);
-
-        $nL->setDivider([]);
+        $this->assertEquals($expected, json_decode(json_encode($mock), JSON_OBJECT_AS_ARRAY));
     }
 
 }

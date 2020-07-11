@@ -2,11 +2,7 @@
 
 namespace Ht7\Base\Tests\Functional;
 
-use \BadMethodCallException;
-use \InvalidArgumentException;
-use \stdClass;
 use \PHPUnit\Framework\TestCase;
-use \Ht7\Html\Node;
 use \Ht7\Html\Tag;
 use \Ht7\Html\Iterators\PreOrderIterator;
 use \Ht7\Html\Lists\AttributeList;
@@ -22,26 +18,6 @@ use \Ht7\Html\Lists\NodeList;
  */
 class TagTest extends TestCase
 {
-
-    private $object;
-
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
-    protected function setUp()
-    {
-        $this->object = new Tag('div', ['bla']);
-    }
-
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
-
-    }
 
     public function testConstructor()
     {
@@ -73,17 +49,46 @@ class TagTest extends TestCase
 
     public function testGetAttributes()
     {
-        $this->assertInstanceOf(AttributeList::class, $this->object->getAttributes());
+        $tag1 = new Tag('div', ['bla']);
+
+        $this->assertInstanceOf(AttributeList::class, $tag1->getAttributes());
+
+        $tag2 = new Tag('div', ['bla'], ['class' => 'btn']);
+
+        $this->assertInstanceOf(AttributeList::class, $tag2->getAttributes());
     }
 
     public function testGetContent()
     {
-        $this->assertInstanceOf(NodeList::class, $this->object->getContent());
+        $tag1 = new Tag('div');
+
+        $this->assertInstanceOf(NodeList::class, $tag1->getContent());
+
+        $tag2 = new Tag('div', ['bla']);
+
+        $this->assertInstanceOf(NodeList::class, $tag2->getContent());
+    }
+
+    public function testGetIterator()
+    {
+        $tag1 = new Tag('div');
+
+        $this->assertInstanceOf(PreOrderIterator::class, $tag1->getIterator());
+
+        $tag2 = new Tag('div', ['bla']);
+
+        $this->assertInstanceOf(PreOrderIterator::class, $tag2->getIterator());
     }
 
     public function testGetIteratorPreOrder()
     {
-        $this->assertInstanceOf(PreOrderIterator::class, $this->object->getIteratorPreOrder());
+        $tag1 = new Tag('div');
+
+        $this->assertInstanceOf(PreOrderIterator::class, $tag1->getIteratorPreOrder());
+
+        $tag2 = new Tag('div', ['bla']);
+
+        $this->assertInstanceOf(PreOrderIterator::class, $tag2->getIteratorPreOrder());
     }
 
     public function testJsonSerialize()
@@ -100,17 +105,17 @@ class TagTest extends TestCase
                 ->method('jsonSerialize')
                 ->willReturn(['class' => 'btn btn-primary']);
 
-        $tag = $this->getMockBuilder(Tag::class)
+        $mock = $this->getMockBuilder(Tag::class)
                 ->setMethods(['getAttributes', 'getContent', 'getTagName'])
                 ->getMock();
 
-        $tag->expects($this->once())
+        $mock->expects($this->once())
                 ->method('getAttributes')
                 ->willReturn($alMock);
-        $tag->expects($this->once())
+        $mock->expects($this->once())
                 ->method('getContent')
                 ->willReturn($nlMock);
-        $tag->expects($this->once())
+        $mock->expects($this->once())
                 ->method('getTagName')
                 ->willReturn('span');
 
@@ -120,7 +125,7 @@ class TagTest extends TestCase
             'tag' => 'span',
         ];
 
-        $this->assertEquals($expected, $tag->jsonSerialize());
+        $this->assertEquals($expected, json_decode(json_encode($mock), JSON_OBJECT_AS_ARRAY));
     }
 
     public function testSetAttributes()
@@ -237,47 +242,47 @@ class TagTest extends TestCase
 
     public function testToString()
     {
-        $tag = $this->getMockBuilder(Tag::class)
+        $mock = $this->getMockBuilder(Tag::class)
                 ->setMethods(['getAttributes', 'getContent', 'getTagName', 'isSelfClosing'])
                 ->getMock();
 
-        $tag->expects($this->once())
+        $mock->expects($this->once())
                 ->method('getTagName')
                 ->willReturn('div');
-        $tag->expects($this->once())
+        $mock->expects($this->once())
                 ->method('getAttributes')
                 ->willReturn('class="btn btn-primary"');
-        $tag->expects($this->once())
+        $mock->expects($this->once())
                 ->method('isSelfClosing')
                 ->willReturn(false);
-        $tag->expects($this->once())
+        $mock->expects($this->once())
                 ->method('getContent')
                 ->willReturn('test text.');
 
         $expected = '<div class="btn btn-primary">test text.</div>';
 
-        $this->assertEquals($expected, ((string) $tag));
+        $this->assertEquals($expected, ((string) $mock));
     }
 
     public function testToStringSelfClosing()
     {
-        $tag2 = $this->getMockBuilder(Tag::class)
+        $mock = $this->getMockBuilder(Tag::class)
                 ->setMethods(['getAttributes', 'getTagName', 'isSelfClosing'])
                 ->getMock();
 
-        $tag2->expects($this->once())
+        $mock->expects($this->once())
                 ->method('getTagName')
                 ->willReturn('br');
-        $tag2->expects($this->once())
+        $mock->expects($this->once())
                 ->method('getAttributes')
                 ->willReturn('style="display: none;"');
-        $tag2->expects($this->once())
+        $mock->expects($this->once())
                 ->method('isSelfClosing')
                 ->willReturn(true);
 
         $expected2 = '<br style="display: none;" />';
 
-        $this->assertEquals($expected2, ((string) $tag2));
+        $this->assertEquals($expected2, ((string) $mock));
     }
 
 }

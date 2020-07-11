@@ -23,13 +23,13 @@ trait CanRenderList
         if (is_string($divider)) {
             $this->divider = $divider;
         } else {
-            throw new InvalidDatatypeException('tag name', $divider, ['string']);
+            throw new InvalidDatatypeException('divider', $divider, ['string']);
         }
     }
 
     public function __toString()
     {
-        return implode($this->getDivider(), $this->items);
+        return implode($this->getDivider(), $this->getAll());
     }
 
 }

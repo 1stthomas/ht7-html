@@ -9,7 +9,7 @@ use \Ht7\Html\Renderable;
  *
  * @author Thomas Plüss
  */
-abstract class Node implements Renderable
+abstract class Node implements \JsonSerializable, Renderable
 {
 
     /**

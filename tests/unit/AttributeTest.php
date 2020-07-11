@@ -42,6 +42,62 @@ class AttributeTest extends TestCase
         $constructor->invoke($mock, $name, $value);
     }
 
+    public function testGetName()
+    {
+        $className = Attribute::class;
+
+        $mock = $this->getMockBuilder($className)
+                ->setMethods(['setName'])
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $reflectedClass = new \ReflectionClass($className);
+        $property = $reflectedClass->getProperty('name');
+        $property->setAccessible(true);
+
+        $expected = 'class';
+
+        $property->setValue($mock, $expected);
+
+        $this->assertEquals($expected, $mock->getName());
+    }
+
+    public function testGetValue()
+    {
+        $className = Attribute::class;
+
+        $mock = $this->getMockBuilder($className)
+                ->setMethods(['setValue'])
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $reflectedClass = new \ReflectionClass($className);
+        $property = $reflectedClass->getProperty('value');
+        $property->setAccessible(true);
+
+        $expected = 'btn btn-primary';
+
+        $property->setValue($mock, $expected);
+
+        $this->assertEquals($expected, $mock->getValue());
+    }
+
+    public function testJsonEncode()
+    {
+        $mock = $this->getMockBuilder(Attribute::class)
+                ->setMethods(['getValue'])
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $mock->expects($this->once())
+                ->method('getValue')
+                ->willReturn('btn btn-primary');
+
+        $expected = '"btn btn-primary"';
+
+        $this->assertEquals($expected, json_encode($mock));
+    }
+
     public function testSetNameWithException()
     {
         $mock = $this->getMockBuilder(Attribute::class)

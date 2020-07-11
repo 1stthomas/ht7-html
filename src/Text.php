@@ -50,6 +50,14 @@ class Text extends Node
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        return $this->getContent();
+    }
+
+    /**
      * Set the content.
      *
      * Allowed datatypes:

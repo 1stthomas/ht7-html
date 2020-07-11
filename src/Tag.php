@@ -29,7 +29,7 @@ use \Ht7\Html\Models\SelfClosing;
  *
  * @author Thomas Pluess
  */
-class Tag extends Node implements \JsonSerializable, IteratorAggregate
+class Tag extends Node implements IteratorAggregate
 {
 
     /**
@@ -165,8 +165,8 @@ class Tag extends Node implements \JsonSerializable, IteratorAggregate
     public function jsonSerialize()
     {
         return [
-            'attributes' => $this->getAttributes()->jsonSerialize(),
-            'content' => $this->getContent()->jsonSerialize(),
+            'attributes' => $this->getAttributes(),
+            'content' => $this->getContent(),
             'tag' => $this->getTagName()
         ];
     }

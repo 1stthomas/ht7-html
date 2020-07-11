@@ -17,7 +17,7 @@ use \Ht7\Html\Renderable;
  *
  * @author 1stthomas
  */
-class Attribute implements HashListable, Renderable
+class Attribute implements HashListable, \JsonSerializable, Renderable
 {
 
     /**
@@ -81,6 +81,14 @@ class Attribute implements HashListable, Renderable
     public function getValue()
     {
         return $this->value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        return $this->getValue();
     }
 
     /**

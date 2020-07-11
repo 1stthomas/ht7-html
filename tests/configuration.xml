@@ -48,5 +48,8 @@
         <testsuite name="ht7 html - unit">
             <directory>./unit/</directory>
         </testsuite>
+        <testsuite name="ht7 html - functional">
+            <directory>./Functional/</directory>
+        </testsuite>
     </testsuites>
 </phpunit>

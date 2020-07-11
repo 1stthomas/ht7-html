@@ -16,16 +16,24 @@ use \Ht7\Html\Renderable;
 class AttributeList extends HashList implements \JsonSerializable, Renderable
 {
 
+    use CanRenderList;
+
+    public function __construct(array $data = [])
+    {
+        $this->divider = ' ';
+
+        parent::__construct($data);
+    }
+
     /**
-     * Get the HTML representation of the current element with its descendants.
-     *
-     * @return  string                  A string of HTML elements.
+     * {@inheritdoc}
      */
     public function __toString()
     {
-        ksort($this->items);
+        $all = $this->getAll();
+        ksort($all);
 
-        return implode(' ', $this->items);
+        return implode($this->getDivider(), $all);
     }
 
     /**
@@ -58,9 +66,7 @@ class AttributeList extends HashList implements \JsonSerializable, Renderable
      */
     public function addPlain($name, $value)
     {
-        parent::add((new Attribute($name, $value)));
-
-        return $this;
+        return $this->add((new Attribute($name, $value)));
     }
 
     /**
@@ -74,7 +80,11 @@ class AttributeList extends HashList implements \JsonSerializable, Renderable
     {
         /* @var $attr Attribute */
         foreach ($this->items as $attr) {
-            if ($attr->getValue() === $compare) {
+            $value = $attr->getValue();
+
+            if ($value === $compare) {
+                return true;
+            } elseif (empty($value) && $attr->getName() === $compare) {
                 return true;
             }
         }
@@ -87,14 +97,7 @@ class AttributeList extends HashList implements \JsonSerializable, Renderable
      */
     public function jsonSerialize()
     {
-        $items = [];
-        $all = $this->getAll();
-
-        foreach ($all as $item) {
-            $items[$item->getName()] = $item->getValue();
-        }
-
-        return $items;
+        return $this->getAll();
     }
 
     /**
