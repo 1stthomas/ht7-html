@@ -29,10 +29,11 @@
         <whitelist processUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">../src</directory>
             <exclude>
-                <directory>../src/Tags</directory>
+                <directory>../src/Rules</directory>
                 <directory>../src/Widgets</directory>
                 <file>../src/Renderable.php</file>
-                <file>../src/lists/AbstractRenderableList.php</file>
+                <file>../src/Lists/AbstractRenderableList.php</file>
+                <file>../src/Utilities/AbstractSourceContainer.php</file>
             </exclude>
         </whitelist>
     </filter>

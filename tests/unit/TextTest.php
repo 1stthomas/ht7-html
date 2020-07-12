@@ -6,14 +6,6 @@ use \PHPUnit\Framework\TestCase;
 use \Ht7\Base\Exceptions\InvalidDatatypeException;
 use \Ht7\Html\Text;
 
-/**
- * Test class for the SelfClosing class.
- *
- * @author      Thomas Pluess
- * @since       0.0.1
- * @version     0.0.1
- * @copyright (c) 2019, Thomas Pluess
- */
 class TextTest extends TestCase
 {
 
