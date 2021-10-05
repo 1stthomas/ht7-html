@@ -27,15 +27,11 @@ class Factory
      */
     public static function createSimple(array $body, array $header = [], array $footer = [])
     {
-        $data = [
-            RowTypes::HEADER => $header,
-            RowTypes::BODY => $body,
-            RowTypes::FOOTER => $footer
-        ];
-
-        $model = new ModelSimple($data);
-
-        return new Controller($model);
+        return new Controller((new ModelSimple([
+                    RowTypes::HEADER => $header,
+                    RowTypes::BODY => $body,
+                    RowTypes::FOOTER => $footer
+        ])));
     }
 
 }
