@@ -257,7 +257,6 @@ class TagTest extends TestCase
 
         $expected = '<div class="btn btn-primary">test text.</div>';
 
-        $this->assertEquals($expected, ((string) $tag));
         $this->assertEquals($expected, ((string) $mock));
     }
 
