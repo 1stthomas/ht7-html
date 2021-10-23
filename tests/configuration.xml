@@ -29,8 +29,9 @@
         <whitelist processUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">../src</directory>
             <exclude>
-                <directory>../src/Rules</directory>
-                <directory>../src/Widgets</directory>
+                <directory>../api</directory>
+                <directory>../src/Translators</directory>
+                <directory>../tests/Integration1</directory>
                 <file>../src/Renderable.php</file>
                 <file>../src/Lists/AbstractRenderableList.php</file>
                 <file>../src/Utilities/AbstractSourceContainer.php</file>
