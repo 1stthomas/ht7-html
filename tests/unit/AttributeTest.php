@@ -1,20 +1,12 @@
 <?php
 
-namespace Ht7\Base\Tests;
+namespace Ht7\Html\Tests\Unit;
 
 use \InvalidArgumentException;
 use \stdClass;
 use \PHPUnit\Framework\TestCase;
 use \Ht7\Html\Attribute;
 
-/**
- * Test class for the SelfClosing class.
- *
- * @author      Thomas Pluess
- * @since       0.0.1
- * @version     0.0.1
- * @copyright (c) 2019, Thomas Pluess
- */
 class AttributeTest extends TestCase
 {
 

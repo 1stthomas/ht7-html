@@ -1,6 +1,6 @@
 <?php
 
-namespace Ht7\Base\Tests;
+namespace Ht7\Html\Tests\Unit;
 
 use \PHPUnit\Framework\TestCase;
 use \Ht7\Base\Exceptions\InvalidDatatypeException;
@@ -8,14 +8,6 @@ use \Ht7\Html\Attribute;
 use \Ht7\Html\Lists\AttributeList;
 use \Ht7\Html\Lists\NodeList;
 
-/**
- * Test class for the CanRenderList trait.
- *
- * @author      Thomas Pluess
- * @since       0.0.1
- * @version     0.0.1
- * @copyright (c) 2019, Thomas Pluess
- */
 class CanRenderListTest extends TestCase
 {
 
