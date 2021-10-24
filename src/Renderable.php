@@ -3,6 +3,7 @@
 namespace Ht7\Html;
 
 /**
+ * Indicator to show its content is printable and will produce valid HTML markup.
  *
  * @author Thonas Plüss
  */

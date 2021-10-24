@@ -64,7 +64,7 @@ class Attribute implements HashListable, \JsonSerializable, Renderable
     }
 
     /**
-     * Get the name of the present attribtue.
+     * Get the name of the present attribute.
      *
      * @return  string                  The attribute name.
      */
