@@ -3,6 +3,7 @@
 namespace Ht7\Html\Widgets;
 
 use \Ht7\Html\Lists\NodeList;
+use \Ht7\Html\Widgets\Modelable;
 
 /**
  *
