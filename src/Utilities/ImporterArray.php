@@ -113,7 +113,7 @@ class ImporterArray extends AbstractImporter
                 return $this->importNodeList($input);
             } else {
                 if (isset($input['tag'])) {
-                    $this->createTag($input);
+                    return $this->createTag($input);
                 } elseif (isset($input['type'])) {
                     return $this->createTypedElement($input);
                 } else {

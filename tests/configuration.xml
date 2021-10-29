@@ -30,11 +30,13 @@
             <directory suffix=".php">../src</directory>
             <exclude>
                 <directory>../api</directory>
-                <directory>../src/Translators</directory>
-                <directory>../tests/Integration1</directory>
+                <directory>./Integration</directory>
                 <file>../src/Renderable.php</file>
                 <file>../src/Lists/AbstractRenderableList.php</file>
                 <file>../src/Utilities/AbstractSourceContainer.php</file>
+                <file>../src/Widgets/Modelable.php</file>
+                <file>../src/Widgets/Viewable.php</file>
+                <file>../src/Widgets/Table/Models/Modelable.php</file>
             </exclude>
         </whitelist>
     </filter>

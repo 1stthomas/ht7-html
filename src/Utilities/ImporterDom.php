@@ -94,24 +94,21 @@ class ImporterDom extends AbstractImporter
      * @return  Tag                     The prepared Tag instance.
      * @throws \InvalidArgumentException
      */
-    public function read($el, Tag $tag = null)
+    public function import($input)
     {
-        if (!($el instanceof \DOMElement)) {
+        if (!($input instanceof \DOMElement)) {
             $e = 'Element must be an instance of \DOMElement, found '
-                    . is_object($el) ? get_class($el) : gettype($el);
+                    . is_object($input) ? get_class($input) : gettype($input);
 
             throw new \InvalidArgumentException($e);
         }
 
-        if (empty($tag)) {
-            $tag = $this->createTag($el);
-        }
-
+        $tag = $this->createTag($input);
         $elements = [];
 
-        foreach ($el->childNodes as $node) {
+        foreach ($input->childNodes as $node) {
             if ($node instanceof \DOMElement) {
-                $elements[] = $this->read($node);
+                $elements[] = $this->import($node);
             } elseif ($node instanceof \DOMText) {
                 $elements[] = $this->createText($node);
             }

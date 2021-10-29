@@ -221,6 +221,10 @@ class Tag extends Node implements IteratorAggregate
             throw new BadMethodCallException($e);
         }
 
+        if (is_scalar($content) || $content instanceof Node) {
+            $content = [$content];
+        }
+
         $this->content = $content instanceof NodeList ? $content : new NodeList($content);
     }
 

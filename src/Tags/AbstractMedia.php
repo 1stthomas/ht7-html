@@ -1,6 +1,6 @@
 <?php
 
-namespace Ht7\Html\Utilities;
+namespace Ht7\Html\Tags;
 
 /**
  * Base class of <code>\Ht7\Html\Tags\Video</code> and <code>\Ht7\Html\Tags\Audio</code>.

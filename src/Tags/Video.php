@@ -2,7 +2,7 @@
 
 namespace Ht7\Html\Tags;
 
-use \Ht7\Html\Utilities\AbstractMedia;
+use \Ht7\Html\Tags\AbstractMedia;
 
 /**
  * This class generates the HTML markup of an video tag with a few input.

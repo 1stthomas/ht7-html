@@ -53,7 +53,7 @@ class ImporterString extends AbstractImporter
      * @return  Tag                         The Tag tree.
      * @throws  \InvalidArgumentException
      */
-    public function read($html, Tag $tag = null)
+    public function import($html)
     {
         if (!is_string($html)) {
             $e = 'The input source must be a string, found '
@@ -82,7 +82,19 @@ class ImporterString extends AbstractImporter
             }
         }
 
-        return count($els) > 0 ? ImporterDom::getInstance()->read($els[0]) : null;
+        if (count($els) === 1) {
+            return ImporterDom::getInstance()->import($els[0]);
+        } elseif (count($els) > 1) {
+            $items = [];
+
+            foreach ($els as $el) {
+                $items[] = ImporterDom::getInstance()->import($el);
+            }
+
+            return $items;
+        }
+
+        return null;
     }
 
 }

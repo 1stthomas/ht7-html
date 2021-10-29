@@ -1,6 +1,6 @@
 <?php
 
-namespace Ht7\Base\Tests\Unit;
+namespace Ht7\Base\Tests\Unit\Lists;
 
 use \InvalidArgumentException;
 use \PHPUnit\Framework\TestCase;

@@ -3,7 +3,7 @@
 namespace Ht7\Html\Tests\Unit\Tags;
 
 use \PHPUnit\Framework\TestCase;
-use \Ht7\Html\Utilities\AbstractMedia;
+use \Ht7\Html\Tags\AbstractMedia;
 
 class AbstractMediaTest extends TestCase
 {

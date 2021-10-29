@@ -1,6 +1,6 @@
 <?php
 
-namespace Ht7\Html\Utilities;
+namespace Ht7\Html\Tags;
 
 use \Ht7\Html\Tag;
 
