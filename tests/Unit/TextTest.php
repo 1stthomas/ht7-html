@@ -3,7 +3,6 @@
 namespace Ht7\Html\Tests\Unit;
 
 use \PHPUnit\Framework\TestCase;
-use \Ht7\Base\Exceptions\InvalidDatatypeException;
 use \Ht7\Html\Text;
 
 class TextTest extends TestCase
@@ -102,7 +101,7 @@ class TextTest extends TestCase
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $this->expectException(InvalidDatatypeException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $mock->setContent([]);
     }
