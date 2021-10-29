@@ -10,22 +10,44 @@ abstract class AbstractImporter
     protected static $instances;
 
     /**
+     * Get the singleton of the present importer class.
      *
-     * @return AbstractImporter
+     * @return type
+     * @throws \BadMethodCallException
      */
-    public static function getInstance()
+    public static function getInstance(string $class = '')
     {
-        if (static::class === AbstractImporter::class) {
-            $e = 'Can not instanciate an abstract class.';
+        if (empty($class) || $class === AbstractImporter::class) {
+            if (static::class === AbstractImporter::class || $class === AbstractImporter::class) {
+                $e = 'Can not instanciate an abstract class.';
 
-            throw new \BadMethodCallException($e);
+                throw new \BadMethodCallException($e);
+            }
+
+            $class = static::class;
         }
 
-        if (empty(static::$instances[static::class])) {
-            static::$instances[static::class] = new static();
+        if (empty(static::$instances[$class])) {
+            static::$instances[$class] = new $class();
         }
 
-        return static::$instances[static::class];
+        return static::$instances[$class];
+    }
+
+    /**
+     * Set the singleton of a specific importer class.
+     *
+     * @param   AbstractImporter    $importer   The importer instance to set.
+     * @param   string              $key        Optional key. If empty, the full
+     *                                          namespaced class name will be used.
+     */
+    public static function setInstance(AbstractImporter $importer, string $key = '')
+    {
+        if ($key === '') {
+            $key = get_class($importer);
+        }
+
+        static::$instances[$key] = $importer;
     }
 
     /**
@@ -34,11 +56,11 @@ abstract class AbstractImporter
      * This function uses internally the DOMDocument and its anchestors to gain
      * a valid HTML DOM. This Dom is parsed to gain the Tag tree.
      *
-     * @param   mixed   $source             Object or string with html definitions.
+     * @param   mixed   $input              Object, array or string with html definitions.
      *                                      See implementations of this class.
      * @return  Tag|null                    A Tag tree. If empty a new Tag instance
      *                                      will be created.
      * @throws  \InvalidArgumentException
      */
-    abstract public function read($source, Tag $tag = null);
+    abstract public function import($input);
 }

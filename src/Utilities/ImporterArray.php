@@ -2,8 +2,11 @@
 
 namespace Ht7\Html\Utilities;
 
+use \Ht7\Html\Callback;
+use \Ht7\Html\Node;
 use \Ht7\Html\Tag;
 use \Ht7\Html\Text;
+use \Ht7\Html\Lists\NodeList;
 use \Ht7\Html\Utilities\AbstractImporter;
 
 /**
@@ -15,24 +18,69 @@ class ImporterArray extends AbstractImporter
 {
 
     /**
-     * Create a Node instance according to the datatype of the present element.
+     * Create a <code>\Ht7\Html\Tag</code> instance with the present data.
      *
-     * @param   mixed   $el             The present element on which is decided
-     *                                  what has to be done next.
-     *                                  If it is a scalar value, a Text instance
-     *                                  will be created. Otherwise a next
-     *                                  recursive iteration will be released.
-     * @return  mixed                   Text or Tag instance according to the
-     *                                  datatype of the present element.
+     * An exception will be thrown in case the "tag" key is missing.
+     *
+     * @param   array   $data           Assoc array with in minimum a "tag" key.
+     *                                  "attributes" and "content" keys are optional.
+     * @return  Tag
+     * @throws  \InvalidArgumentException
      */
-    public function createContentElement($el)
+    public function createTag(array $data)
     {
-        if (is_scalar($el)) {
-            return new Text($el);
-        } elseif ($el instanceof Tag || $el instanceof Text) {
-            return $el;
+        if (empty($data['tag'])) {
+            $e = 'Missing "tag" key.';
+
+            throw new \InvalidArgumentException($e);
+        }
+
+        $content = isset($data['content']) ? $data['content'] : [];
+        $attributes = isset($data['attributes']) ? $data['attributes'] : [];
+
+        return new Tag($data['tag'], $content, $attributes);
+    }
+
+    /**
+     * Create a <code>\Ht7\Html\Text</code> instance with the present data.
+     *
+     * An exception will be thrown in case the parameter is not a scalar type.
+     *
+     * @param   string|int|float    $text   The content.
+     * @return  Text                        The node with the present content.
+     * @throws \InvalidArgumentException
+     */
+    public function createText($text)
+    {
+        if (is_scalar($text)) {
+            return new Text($text);
+        }
+
+        $e = 'Only scalar types are supported. Found: ' . gettype($text);
+
+        throw new \InvalidArgumentException($e);
+    }
+
+    /**
+     * Create a typed node.
+     *
+     * Supported types:
+     * - 'callback'
+     *
+     * @param   array       $arr            Assoc array with in minimum the key
+     *                                      "type". For other keys see the related
+     *                                      documentation.
+     * @return  Callback                    The new instance.
+     * @throws  \InvalidArgumentException
+     */
+    public function createTypedElement(array $arr)
+    {
+        if ($arr['type'] === 'callback') {
+            return new Callback($arr);
         } else {
-            return $this->read($el);
+            $e = 'Unsupported node type "' . $arr['type'] . '".';
+
+            throw new \InvalidArgumentException($e);
         }
     }
 
@@ -47,46 +95,68 @@ class ImporterArray extends AbstractImporter
      *     'attributes' => ['class' => 'btn', 'id' => 'btn-123']
      * ];
      * </code></pre>
-     * will produce <code>&lt;div class="btn" id="btn-123"&gt;simple text&lt;&#47;div&gt;</code>
+     * will transform into<br />
+     * <code>&lt;div class="btn" id="btn-123"&gt;simple text&lt;&#47;div&gt;</code>.
      *
-     * @param   array   $arr
-     * @return  Tag
+     * @param   string|array|Node   $input
+     * @return  Node|Text|Tag
      * @throws  \InvalidArgumentException
      */
-    public function read($arr, Tag $tag = null)
+    public function import($input)
     {
-        if (empty($arr)) {
+        if (empty($input)) {
             return null;
-        } elseif (!is_array($arr)) {
-            $e = 'The input must be an array, found ' . gettype($arr);
+        } elseif (is_scalar($input)) {
+            return $this->createText($input);
+        } elseif (is_array($input)) {
+            if ($this->isIndexed($input)) {
+                return $this->importNodeList($input);
+            } else {
+                if (isset($input['tag'])) {
+                    $this->createTag($input);
+                } elseif (isset($input['type'])) {
+                    return $this->createTypedElement($input);
+                } else {
+                    $e = 'Missing "tag" or "type" key. Found only: ["'
+                            . implode('", "', array_keys($input)) . '"]';
 
-            throw new \InvalidArgumentException($e);
-        } elseif (isset($arr['tag'])) {
-            $attributes = isset($arr['attributes']) ? $arr['attributes'] : [];
-            $els = isset($arr['content']) ? $arr['content'] : [];
-            $content = [];
-
-            if (is_array($els)) {
-                foreach ($els as $el) {
-                    $content[] = $this->createContentElement($el);
+                    throw new \InvalidArgumentException($e);
                 }
-            } else {
-                $content[] = $this->createContentElement($els);
             }
-
-            if (empty($tag)) {
-                return new Tag($arr['tag'], $content, $attributes);
-            } else {
-                $tag->setContent($content);
-                $tag->setAttributes($attributes);
-
-                return $tag;
-            }
+        } elseif (is_object($input) && $input instanceof Node) {
+            return $input;
         } else {
-            $e = 'The "tag" definition is missing.';
+            $e = 'Unsupported ' . (is_object($input) ?
+                    'class: ' . get_class($input) : 'type: ' . gettype($input));
 
             throw new \InvalidArgumentException($e);
         }
+    }
+
+    /**
+     * Import an indexed array of element informations.
+     *
+     * @param   array   $arr
+     * @param   bool    $createNodeList         True if a <code>\Ht7\Html\Lists\NodeList</code>
+     *                                          should be created.
+     * @return  array|NodeList                  An indexed array if the boolean
+     *                                          parameter is false, otherwise
+     *                                          a new created <code>\Ht7\Html\Lists\NodeList</code>.
+     */
+    public function importNodeList(array $arr = [], bool $createNodeList = false)
+    {
+        $items = [];
+
+        foreach ($arr as $item) {
+            $items[] = $this->import($item);
+        }
+
+        return $createNodeList ? new NodeList($items) : $items;
+    }
+
+    protected function isIndexed(array $arr)
+    {
+        return array_keys($arr) === array_keys(array_keys($arr));
     }
 
 }

@@ -1,23 +1,16 @@
 <?php
 
-namespace Ht7\Base\Tests\Unit;
+namespace Ht7\Base\Tests\Unit\Lists;
 
 use \PHPUnit\Framework\TestCase;
-use \Ht7\Base\Exceptions\InvalidDatatypeException;
-use \Ht7\Html\Attribute;
-use \Ht7\Html\Tag;
-use \Ht7\Html\Text;
 use \Ht7\Html\Lists\NodeList;
+use \Ht7\Html\Utilities\ImporterArray;
 
 /**
- * Test class for the NodeList class.
- *
- * @author      Thomas Pluess
- * @since       0.0.1
- * @version     0.0.1
- * @copyright (c) 2019, Thomas Pluess
+ * @covers \Ht7\Html\Lists\NodeList
+ * @uses \Ht7\Html\Utilities\ImporterArray
  */
-class NodeListTest extends TestCase
+final class NodeListTest extends TestCase
 {
 
     public function testConstructor()
@@ -41,88 +34,46 @@ class NodeListTest extends TestCase
 
     public function testAdd()
     {
-        $className = NodeList::class;
+        $value = 'test text';
 
-        $mock = $this->getMockBuilder($className)
-                ->setMethods(['setTagName', 'setContent', 'setAttributes'])
+        $importer = $this->getMockBuilder(ImporterArray::class)
                 ->disableOriginalConstructor()
+                ->setMethods(['import'])
                 ->getMock();
 
-        $reflectedClass = new \ReflectionClass($className);
-        $property = $reflectedClass->getProperty('items');
-        $property->setAccessible(true);
+        $importer->expects($this->once())
+                ->method('import')
+                ->with($value)
+                ->willReturn($value);
 
-        $text = $this->createMock(Text::class);
-        $mock->add($text);
+        ImporterArray::setInstance($importer, ImporterArray::class);
 
-        $this->assertCount(1, $property->getValue($mock));
+        $mock = $this->getMockBuilder(NodeList::class)
+                ->disableOriginalConstructor()
+                ->setMethods(['load'])
+                ->getMock();
 
-        $arr = ['tag' => 'div'];
-        $mock->add($arr);
+        $reflectedClass = new \ReflectionClass(NodeList::class);
+        $constructor = $reflectedClass->getConstructor();
+        $constructor->invoke($mock, []);
 
-        $this->assertCount(2, $property->getValue($mock));
-
-        $plain = 'text plain';
-        $mock->add($plain);
-
-        $this->assertCount(3, $property->getValue($mock));
-
-        $this->expectException(InvalidDatatypeException::class);
-
-        $mock->add((new NodeList()));
+        $this->assertInstanceOf(NodeList::class, $mock->add($value));
     }
 
     public function testJsonEncode()
     {
-        $node1 = $this->getMockBuilder(Text::class)
-                ->setMethods(['jsonSerialize'])
-                ->disableOriginalConstructor()
-                ->getMock();
-        $node1->expects($this->once())
-                ->method('jsonSerialize')
-                ->willReturn('test text 1');
-
-        $node2 = $this->getMockBuilder(Tag::class)
-                ->setMethods(['jsonSerialize'])
-                ->disableOriginalConstructor()
-                ->getMock();
-        $node2->expects($this->once())
-                ->method('jsonSerialize')
-                ->willReturn(['attributes' => ['class' => 'btn'], 'content' => ['inner text'], 'tag' => 'div']);
-
-        $node3 = $this->getMockBuilder(Text::class)
-                ->setMethods(['jsonSerialize'])
-                ->disableOriginalConstructor()
-                ->getMock();
-        $node3->expects($this->once())
-                ->method('jsonSerialize')
-                ->willReturn('test text 2');
-
-        $data = [$node1, $node2, $node3];
-        $className = NodeList::class;
-
-        $mock = $this->getMockBuilder($className)
-                ->setMethods(['load'])
+        $mock = $this->getMockBuilder(NodeList::class)
+                ->setMethods(['getAll'])
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $reflectedClass = new \ReflectionClass($className);
-        $property = $reflectedClass->getProperty('items');
-        $property->setAccessible(true);
+        $mock->expects($this->once())
+                ->method('getAll')
+                ->willReturn(['test 1', 'test 2']);
 
-        $property->setValue($mock, $data);
+        $expected = '["test 1","test 2"]';
 
-        $expected = [
-            'test text 1',
-            [
-                'attributes' => ['class' => 'btn'],
-                'content' => ['inner text'],
-                'tag' => 'div'
-            ],
-            'test text 2'
-        ];
-
-        $this->assertEquals($expected, json_decode(json_encode($mock), JSON_OBJECT_AS_ARRAY));
+        $this->assertEquals($expected, json_encode($mock));
     }
 
 }
