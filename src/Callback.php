@@ -86,8 +86,10 @@ class Callback extends Node
 
     protected function createModel(array $content)
     {
+        $parameters = isset($content['parameters']) ? $content['parameters'] : [];
+
         if (!empty($content['callable'])) {
-            $this->model = new CallbackWithCallableModel($content['callable']);
+            $this->model = new CallbackWithCallableModel($content['callable'], $parameters);
         } elseif (empty($content['instance'])) {
             if (empty($content['method'])) {
                 $e = 'Missing method.';
@@ -95,7 +97,7 @@ class Callback extends Node
                 throw new \InvalidArgumentException($e);
             }
 
-            $this->model = new CallbackWithMethodModel($content['method']);
+            $this->model = new CallbackWithMethodModel($content['method'], $parameters);
         } else {
             if (empty($content['method'])) {
                 $e = 'Missing method.';
@@ -105,7 +107,8 @@ class Callback extends Node
 
             $this->model = new CallbackWithInstanceModel(
                     $content['instance'],
-                    $content['method']
+                    $content['method'],
+                    $parameters
             );
         }
     }

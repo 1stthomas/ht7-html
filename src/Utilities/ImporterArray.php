@@ -4,6 +4,7 @@ namespace Ht7\Html\Utilities;
 
 use \Ht7\Html\Callback;
 use \Ht7\Html\Node;
+use \Ht7\Html\Replacer;
 use \Ht7\Html\Tag;
 use \Ht7\Html\Text;
 use \Ht7\Html\Lists\NodeList;
@@ -77,6 +78,8 @@ class ImporterArray extends AbstractImporter
     {
         if ($arr['type'] === 'callback') {
             return new Callback($arr);
+        } elseif ($arr['type'] === 'replacer') {
+            return new Replacer($arr);
         } else {
             $e = 'Unsupported node type "' . $arr['type'] . '".';
 
