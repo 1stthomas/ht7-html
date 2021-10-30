@@ -10,7 +10,7 @@ use \Ht7\Html\Widgets\Viewable;
  *
  * @author Thomas Pluess
  */
-abstract class AbstractController implements \JsonSerializable
+abstract class AbstractWidgetController implements \JsonSerializable
 {
 
     /**
@@ -65,10 +65,9 @@ abstract class AbstractController implements \JsonSerializable
      */
     public function jsonSerialize()
     {
-        $view = $this->getView();
-        $view->render();
-
-        return $view->getItemList()->jsonSerialize();
+        return $this->getView()
+                        ->render()
+                        ->jsonSerialize();
     }
 
     /**
@@ -77,7 +76,7 @@ abstract class AbstractController implements \JsonSerializable
      */
     public function render()
     {
-        return $this->getView()->render();
+        return $this->getView();
     }
 
     /**

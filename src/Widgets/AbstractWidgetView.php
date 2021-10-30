@@ -10,7 +10,7 @@ use \Ht7\Html\Lists\NodeList;
  *
  * @author Thomas Pluess
  */
-abstract class AbstractView implements Renderable, Viewable
+abstract class AbstractWidgetView implements Renderable, Viewable
 {
 
     /**
@@ -41,7 +41,7 @@ abstract class AbstractView implements Renderable, Viewable
      */
     public function __construct(Modelable $model = null, NodeList $iL = null)
     {
-        $this->isTransformed = false;
+        $this->setIsTransformed(false);
 
         if ($model !== null) {
             $this->setModel($model);
@@ -58,7 +58,17 @@ abstract class AbstractView implements Renderable, Viewable
      */
     public function __toString()
     {
-        return '' . $this->render();
+        return (string) $this->render();
+    }
+
+    /**
+     * Get the value of the <code>isTransformed</code> property.
+     *
+     * @return  bool                    True if the view has been transformed.
+     */
+    public function getIsTransformed()
+    {
+        return $this->isTransformed;
     }
 
     /**
@@ -72,13 +82,23 @@ abstract class AbstractView implements Renderable, Viewable
     }
 
     /**
+     * Get the model.
+     *
+     * @return Modelable
+     */
+    public function getModel()
+    {
+        return $this->model;
+    }
+
+    /**
      * Transform the model data into the Tag instances.
      *
      * @return  NodeList            The filled list of tag elements.
      */
     public function render()
     {
-        if (!$this->isTransformed) {
+        if (!$this->getIsTransformed()) {
             $this->transform();
         }
 
@@ -92,11 +112,20 @@ abstract class AbstractView implements Renderable, Viewable
      */
     public function reset()
     {
-        if ($this->isTransformed) {
-            $iL = new NodeList();
-            $this->setItemList($iL);
-            $this->isTransformed = false;
+        if ($this->getIsTransformed()) {
+            $this->setItemList(new NodeList());
+            $this->setIsTransformed(false);
         }
+    }
+
+    /**
+     * Set the value of the <code>isTransformed</code> property.
+     *
+     * @param   bool    $isTransformed      True if the view has been transformed.
+     */
+    public function setIsTransformed(bool $isTransformed)
+    {
+        $this->isTransformed = $isTransformed;
     }
 
     /**

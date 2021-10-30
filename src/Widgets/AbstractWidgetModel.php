@@ -6,7 +6,7 @@ namespace Ht7\Html\Widgets;
  *
  * @author Thomas Pluess
  */
-abstract class Model implements Modelable
+abstract class AbstractWidgetModel implements Modelable
 {
 
     /**
@@ -38,7 +38,7 @@ abstract class Model implements Modelable
 
     /**
      * Set the model data.
-     * 
+     *
      * @param   array   $data   The model data.
      */
     public function setData(array $data)
