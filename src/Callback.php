@@ -43,23 +43,13 @@ class Callback extends Node
         return $this->model;
     }
 
-//
-//    /**
-//     * Get the content.
-//     *
-//     * @return  string                  The content of the current text element.
-//     */
-//    public function getContent()
-//    {
-//        return parent::getContent();
-//    }
-
     /**
      * {@inheritdoc}
      */
     public function jsonSerialize()
     {
-        return $this->getModel();
+        return $this->process();
+//        return $this->getModel();
     }
 
     /**
@@ -87,6 +77,7 @@ class Callback extends Node
     protected function createModel(array $content)
     {
         $parameters = isset($content['parameters']) ? $content['parameters'] : [];
+        print_r(array_keys($content));
 
         if (!empty($content['callable'])) {
             $this->model = new CallbackWithCallableModel($content['callable'], $parameters);

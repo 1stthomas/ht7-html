@@ -113,21 +113,17 @@ class CallbackTest extends TestCase
     {
         $className = Callback::class;
 
-        $model = $this->createMock(CallbackWithCallableModel::class);
-        $model->expects($this->once())
-                ->method('jsonSerialize')
-                ->willReturn(['test' => 'test123']);
+        $return = '{"test":"test123"}';
+        $expected = '"{\"test\":\"test123\"}"';
 
         $mock = $this->getMockBuilder($className)
-                ->setMethods(['getModel'])
+                ->setMethods(['process'])
                 ->disableOriginalConstructor()
                 ->getMock();
 
         $mock->expects($this->once())
-                ->method('getModel')
-                ->willReturn($model);
-
-        $expected = '{"test":"test123"}';
+                ->method('process')
+                ->willReturn($return);
 
         $this->assertEquals($expected, json_encode($mock));
     }

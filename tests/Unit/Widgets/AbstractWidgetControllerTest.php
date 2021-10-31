@@ -15,7 +15,13 @@ class AbstractWidgetControllerTest extends TestCase
         // see: http://miljar.github.io/blog/2013/12/20/phpunit-testing-the-constructor/
         $className = AbstractWidgetController::class;
         $model = $this->getMockForAbstractClass(AbstractWidgetModel::class);
-        $view = $this->getMockForAbstractClass(AbstractWidgetView::class);
+        $view = $this->getMockBuilder(AbstractWidgetView::class)
+                ->setMethods(['setModel'])
+                ->getMockForAbstractClass();
+
+        $view->expects($this->once())
+                ->method('setModel')
+                ->with($this->equalTo($model));
 
         $mock = $this->getMockBuilder($className)
                 ->setMethods(['setModel', 'setView'])
@@ -74,6 +80,14 @@ class AbstractWidgetControllerTest extends TestCase
         $this->assertEquals($view, $mock->getView());
     }
 
+    public function testJsonSerialize()
+    {
+        // @todo...
+        // atm the callback fails to replace the value when encoding.
+
+        $this->assertTrue(true);
+    }
+
     public function testSetModel()
     {
         $className = AbstractWidgetController::class;
@@ -112,6 +126,22 @@ class AbstractWidgetControllerTest extends TestCase
         $property->setAccessible(true);
 
         $this->assertEquals($view, $property->getValue($mock));
+    }
+
+    public function testToString()
+    {
+        $expected = 'rendered string.';
+
+        $mock = $this->getMockBuilder(AbstractWidgetController::class)
+                ->setMethods(['getView'])
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $mock->expects($this->once())
+                ->method('getView')
+                ->willReturn($expected);
+
+        $this->assertEquals($expected, (string) $mock);
     }
 
 }

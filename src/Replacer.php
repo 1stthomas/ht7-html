@@ -2,12 +2,13 @@
 
 namespace Ht7\Html;
 
+use \Ht7\Html\Node;
 use \Ht7\Html\Callback;
 
 /**
  * The replacer node can
  */
-class Replacer
+class Replacer extends Node
 {
 
     /**
@@ -24,7 +25,7 @@ class Replacer
     protected $id;
 
     /**
-     * The registry namespace.
+     * The registry namespace. - Not in use atm.
      *
      * @var string
      */
@@ -77,6 +78,14 @@ class Replacer
         return $this->namespace;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        return $this->getCallback();
+    }
+
     public function setCallback($callback = [])
     {
         if (!is_array($callback) && !(is_object($callback) && !($callback instanceof Callback))) {
@@ -103,6 +112,14 @@ class Replacer
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function setContent($content)
+    {
+        $this->content = $content;
+    }
+
+    /**
      * Set the replacer node id.
      *
      * @param   string  $id
@@ -122,8 +139,4 @@ class Replacer
         $this->namespace = $namespace;
     }
 
-//    protected function register()
-//    {
-//
-//    }
 }

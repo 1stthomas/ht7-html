@@ -2,6 +2,7 @@
 
 namespace Ht7\Html\Widgets;
 
+use \Ht7\Html\Renderable;
 use \Ht7\Html\Widgets\Modelable;
 use \Ht7\Html\Widgets\Viewable;
 
@@ -10,7 +11,7 @@ use \Ht7\Html\Widgets\Viewable;
  *
  * @author Thomas Pluess
  */
-abstract class AbstractWidgetController implements \JsonSerializable
+abstract class AbstractWidgetController implements \JsonSerializable, Renderable
 {
 
     /**
@@ -30,14 +31,27 @@ abstract class AbstractWidgetController implements \JsonSerializable
     /**
      * Create a widget instance.
      *
-     * @param Modelable $model
-     * @param Viewable $view
+     * In case both parameters are objects, the model will be set to the view.
+     *
+     * @param   Modelable   $model
+     * @param   Viewable    $view
      */
     public function __construct(Modelable $model = null, Viewable $view = null)
     {
         $this->setModel($model);
-
         $this->setView($view);
+
+        if (is_object($model) && is_object($view)) {
+            $view->setModel($model);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString()
+    {
+        return (string) $this->getView();
     }
 
     /**
@@ -68,15 +82,6 @@ abstract class AbstractWidgetController implements \JsonSerializable
         return $this->getView()
                         ->render()
                         ->jsonSerialize();
-    }
-
-    /**
-     *
-     * @return \Ht7\Html\Lists\NodeList;
-     */
-    public function render()
-    {
-        return $this->getView();
     }
 
     /**

@@ -8,6 +8,7 @@ use \Ht7\Html\Replacer;
 use \Ht7\Html\Tag;
 use \Ht7\Html\Text;
 use \Ht7\Html\Lists\NodeList;
+use \Ht7\Html\Models\ImporterArrayDefaultsModel;
 use \Ht7\Html\Utilities\AbstractImporter;
 
 /**
@@ -17,6 +18,27 @@ use \Ht7\Html\Utilities\AbstractImporter;
  */
 class ImporterArray extends AbstractImporter
 {
+
+    /**
+     * Importer defaults.
+     *
+     * @var ImporterArrayDefaultsModel
+     */
+    protected $defaults;
+
+    /**
+     * Create an instance of the <code>ImporterArray</code> class.
+     *
+     * @param array|ImporterArrayDefaultsModel $defaults
+     */
+    public function __construct($defaults = [])
+    {
+        if (!is_object($defaults) || !($defaults instanceof ImporterArrayDefaultsModel)) {
+            $defaults = new ImporterArrayDefaultsModel($defaults);
+        }
+
+        $this->defaults = $defaults;
+    }
 
     /**
      * Create a <code>\Ht7\Html\Tag</code> instance with the present data.
@@ -79,6 +101,10 @@ class ImporterArray extends AbstractImporter
         if ($arr['type'] === 'callback') {
             return new Callback($arr);
         } elseif ($arr['type'] === 'replacer') {
+            $arr['callback'] = empty($arr['callback']) ?
+                    $this->getDefaults()->getCallback() :
+                    $arr['callback'];
+
             return new Replacer($arr);
         } else {
             $e = 'Unsupported node type "' . $arr['type'] . '".';
@@ -88,9 +114,19 @@ class ImporterArray extends AbstractImporter
     }
 
     /**
+     * Get the defaults of the present importer.
+     *
+     * @return ImporterArrayDefaultsModel   A model object with the importer defaults.
+     */
+    public function getDefaults()
+    {
+        return $this->defaults;
+    }
+
+    /**
      * Build a tag tree from an array.
      *
-     * E.g.
+     * Use this method if the root contains tag informations, e.g.:
      * <pre><code>
      * $arr = [
      *     'tag' => 'div',
@@ -118,6 +154,7 @@ class ImporterArray extends AbstractImporter
                 if (isset($input['tag'])) {
                     return $this->createTag($input);
                 } elseif (isset($input['type'])) {
+                    echo "typed el...\n";
                     return $this->createTypedElement($input);
                 } else {
                     $e = 'Missing "tag" or "type" key. Found only: ["'
@@ -157,6 +194,12 @@ class ImporterArray extends AbstractImporter
         return $createNodeList ? new NodeList($items) : $items;
     }
 
+    /**
+     * Check wheter the present array is indexed or assoc.
+     *
+     * @param   array       $arr        The array to check.
+     * @return  bool                    True if the present array is indexed.
+     */
     protected function isIndexed(array $arr)
     {
         return array_keys($arr) === array_keys(array_keys($arr));

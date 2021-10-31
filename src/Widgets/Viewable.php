@@ -20,6 +20,13 @@ interface Viewable
     public function getItemList();
 
     /**
+     * Get the model.
+     *
+     * @return  Modelable           The model of the present view.
+     */
+    public function getModel();
+
+    /**
      * Transform the model data into the Tag instances.
      *
      * @return  NodeList            The filled list of tag elements.
