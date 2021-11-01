@@ -38,7 +38,8 @@ class Replacer extends Node
         }
 
         $this->setId($parameters['id']);
-        $this->setCallback(isset($parameters['callback']) ? $parameters['callback'] : []);
+        $this->setCallback(isset($parameters['callback']) ?
+                        $parameters['callback'] : []);
         $this->setNamespace(isset($parameters['namespace']) ? $parameters['namespace'] : 'ht7/replacer');
 
 //        $this->register();
@@ -88,7 +89,7 @@ class Replacer extends Node
 
     public function setCallback($callback = [])
     {
-        if (!is_array($callback) && !(is_object($callback) && !($callback instanceof Callback))) {
+        if (!is_array($callback) && !(is_object($callback) && $callback instanceof Callback)) {
             $e = 'Unsupported callback parameter '
                     . (is_object($callback) ? get_class($callback) : gettype($callback));
 
@@ -104,7 +105,8 @@ class Replacer extends Node
         }
 
         if (is_array($callback)) {
-            $callback['parameters'] = empty($callback['parameters']) ? [] : $callback['parameters'];
+            $callback['parameters'] = isset($callback['parameters']) ?
+                    $callback['parameters'] : [];
             $callback['parameters']['id'] = $this->getId();
         }
 
