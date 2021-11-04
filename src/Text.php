@@ -1,20 +1,9 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Ht7\Html;
 
-use \InvalidArgumentException;
-use \Ht7\Base\Exceptions\InvalidDatatypeException;
-
 /**
- * Description of Attribute
- *
- * @author 1stthomas
+ * This is a simple text node.
  */
 class Text extends Node
 {
@@ -60,20 +49,19 @@ class Text extends Node
     /**
      * Set the content.
      *
-     * Allowed datatypes:
-     * - string
-     * - integer
-     * - float
+     * Only scalar types will be accepted.
      *
-     * @param   string  $text           The content.
-     * @throws  InvalidArgumentException
+     * @param   mixed   $text               The content as string, integer or float.
+     * @throws  \InvalidArgumentException
      */
     public function setContent($text)
     {
         if (is_scalar($text)) {
             $this->content = (string) $text;
         } else {
-            throw new InvalidDatatypeException('the text content', $text, ['scalar']);
+            $e = 'The text content must be a scalar, found ' . gettype($text);
+
+            throw new \InvalidArgumentException($e);
         }
     }
 

@@ -5,7 +5,7 @@ namespace Ht7\Html;
 use \Ht7\Html\Renderable;
 
 /**
- * Description of Attribute
+ * Base class.
  *
  * @author Thomas Plüss
  */

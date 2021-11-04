@@ -17,6 +17,11 @@ interface Modelable
     public function getData();
 
     /**
+     * Reset the present model.
+     */
+    public function reset();
+
+    /**
      * Set the model data.
      * @param   array   $data   The model data.
      */

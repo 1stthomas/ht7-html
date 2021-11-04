@@ -4,7 +4,7 @@
     "description": "A PHP library to build HTML with OOP.",
     "keywords": ["php", "ht7", "html"],
     "homepage": "https://github.com/1stthomas/ht7-html",
-    "license": "GNU General Public License v3.0",
+    "license": "GPL-3.0-only",
     "authors": [
         {
             "name": "1stthomas",
@@ -43,7 +43,10 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
-        "test": ".\\vendor\\bin\\phpunit --configuration .\\tests\\configuration.xml --testdox",
-        "php1": "php -v"
+        "test": ".\\vendor\\bin\\phpunit --configuration .\\tests\\configuration.xml --colors --testdox",
+        "test-unit": "php .\\vendor\\phpunit\\phpunit\\phpunit --colors --bootstrap .\\tests\\bootstrap.php --configuration .\\tests\\configuration.xml --testsuite \"ht7 html - unit\"",
+        "test-func": "php .\\vendor\\phpunit\\phpunit\\phpunit --colors --bootstrap .\\tests\\bootstrap.php --configuration .\\tests\\configuration.xml --testsuite \"ht7 html - functional\"",
+        "test-unit1": "C:\\dev\\PHP\\current\\php.exe \"C:\\data\\edv\\php\\misc\\ht7-html\\vendor\\phpunit\\phpunit\\phpunit\" \"--colors\" \"--log-junit\" \"C:\\Users\\zoom4u\\AppData\\Local\\Temp\\nb-phpunit-log.xml\" \"--bootstrap\" \"C:\\data\\edv\\php\\misc\\ht7-html\\tests\\bootstrap.php\" \"--configuration\" \"C:\\data\\edv\\php\\misc\\ht7-html\\tests\\configuration.xml\" \"--coverage-clover\" \"C:\\Users\\zoom4u\\AppData\\Local\\Temp\\nb-phpunit-coverage.xml\" \"C:\\Program Files\\NetBeans-11.2\\netbeans\\php\\phpunit\\NetBeansSuite.php",
+        "phpv": "php -v"
     }
 }

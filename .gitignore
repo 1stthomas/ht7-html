@@ -1,5 +1,8 @@
-/vendor/
-/test01.php
+/.dev/
+/.phpdoc/
+/api/
 /nbproject/
-/php_errors.log
+/vendor/
 /composer.lock
+/php_errors.log
+/test*.php

@@ -21,11 +21,12 @@ use \Ht7\Html\Models\SelfClosing;
  * This class can build DOM like trees. To traverse them, there are two iterators:
  * - PostOrderIterator
  * - PreOrderIterator
+ * Sadly atm only <code>PreOrderIterator</code> is here to be used.
  *
  * To build such a kind of DOM tree by an array, use:
- * <code>Ht7\Html\Translators\ImporterHt7::readFromArray($array)</code>. This
- * <code>ImporterHt7</code> class can also transform a DOMElement-tree into an
- * instance of the Tag class.
+ * <code>\Ht7\Html\Utilities\ImporterArray::read($array)</code>. To transform
+ * a DOMElement-tree into an instance of the Tag class use the
+ * <code>\Ht7\Html\Utilities\ImporterDom</code> class.
  *
  * @author Thomas Pluess
  */
@@ -218,6 +219,10 @@ class Tag extends Node implements IteratorAggregate
             $e = sprintf($msg, gettype($this->getTagName()));
 
             throw new BadMethodCallException($e);
+        }
+
+        if (is_scalar($content) || $content instanceof Node) {
+            $content = [$content];
         }
 
         $this->content = $content instanceof NodeList ? $content : new NodeList($content);

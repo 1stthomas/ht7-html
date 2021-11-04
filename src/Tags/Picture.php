@@ -2,7 +2,7 @@
 
 namespace Ht7\Html\Tags;
 
-use \Ht7\Html\Utilities\AbstractSourceContainer;
+use \Ht7\Html\Tags\AbstractSourceContainer;
 
 /**
  * This class generates the HTML markup of a select tag with a few input.

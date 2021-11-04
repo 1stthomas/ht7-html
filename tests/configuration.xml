@@ -29,11 +29,16 @@
         <whitelist processUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">../src</directory>
             <exclude>
-                <directory>../src/Rules</directory>
-                <directory>../src/Widgets</directory>
+                <directory>../api</directory>
+                <directory>../tests/Integration</directory>
+                <directory>../src/Widgets/Table</directory>
                 <file>../src/Renderable.php</file>
                 <file>../src/Lists/AbstractRenderableList.php</file>
-                <file>../src/Utilities/AbstractSourceContainer.php</file>
+                <file>../src/Tags/AbstractSourceContainer.php</file>
+                <file>../src/Widgets/Modelable.php</file>
+                <file>../src/Widgets/Viewable.php</file>
+                <file>../src/Widgets/Table/Models/Modelable.php</file>
+                <file>../src/Widgets/Wrapper/Markups/Bootstrap.php</file>
             </exclude>
         </whitelist>
     </filter>

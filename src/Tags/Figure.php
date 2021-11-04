@@ -7,14 +7,15 @@ use \Ht7\Html\Tag;
 //use \Ht7\Html\Tags\SourceContainer;
 
 /**
- * This class generates the HTML markup of a select tag with few input.
+ * This class generates the HTML markup of a figure tag with a picture and a figcaption.
  *
  * To use it, just instanciate this class with the desired image, source set and
- * attribute informations:<br />
+ * attribute informations, like following:<br />
  * <code>
  * $img = ['src' => 'image.jpg', 'alt' => '', 'class' => 'img img-responsive'];<br />
  * $sets = [690 => 'image1.png', 1100 => 'image2.png'];<br />
- * $pic = new Picture($img, $sets, ['class' => 'test-123']);<br />
+ * $caption = 'Lovely Picture';<br />
+ * $pic = new Figure($img, $caption, $sets, ['class' => 'test-123']);<br />
  * </code><br />
  *
  * @author 1stthomas
