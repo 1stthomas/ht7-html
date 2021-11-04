@@ -78,7 +78,7 @@ class AbstractWidgetControllerTest extends TestCase
         $this->assertEquals($model, $mock->getModel());
         $this->assertEquals($view, $mock->getView());
 
-        $this->assertStringContainsString('from view', (string) $mock->render());
+        $this->assertStringContainsString('from view', (string) $mock);
 
         $mock->getView()->reset();
 

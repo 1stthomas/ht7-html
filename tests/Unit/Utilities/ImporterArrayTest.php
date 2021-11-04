@@ -4,9 +4,11 @@ namespace Ht7\Html\Tests\Unit\Tags;
 
 use \PHPUnit\Framework\TestCase;
 use \Ht7\Html\Callback;
+use \Ht7\Html\Replacer;
 use \Ht7\Html\Tag;
 use \Ht7\Html\Text;
 use \Ht7\Html\Lists\NodeList;
+use \Ht7\Html\Models\ImporterArrayDefaultsModel;
 use \Ht7\Html\Utilities\ImporterArray;
 
 final class ImporterArrayTest extends TestCase
@@ -64,7 +66,7 @@ final class ImporterArrayTest extends TestCase
         $this->importer->createText(new \stdClass);
     }
 
-    public function testCreateTypedElement()
+    public function testCreateTypedElementCallback()
     {
         $data = [
             'method' => 'test',
@@ -72,6 +74,52 @@ final class ImporterArrayTest extends TestCase
         ];
 
         $this->assertInstanceOf(Callback::class, $this->importer->createTypedElement($data));
+    }
+
+    public function testCreateTypedElementReplacerWithArray()
+    {
+        $data = [
+            'id' => '123',
+            'type' => 'replacer',
+            'callback' => [
+                'method' => 'test',
+            ],
+        ];
+
+        $mock = $this->getMockBuilder(ImporterArray::class)
+                ->setMethods(['getDefaults'])
+                ->disableOriginalConstructor()
+                ->getMock();
+        $mock->expects($this->never())
+                ->method('getDefaults');
+
+        $this->assertInstanceOf(Replacer::class, $mock->createTypedElement($data));
+    }
+
+    public function testCreateTypedElementReplacerWithDefaults()
+    {
+        $data = [
+            'id' => '123',
+            'type' => 'replacer',
+        ];
+
+        $defaults = $this->getMockBuilder(ImporterArrayDefaultsModel::class)
+                ->setMethods(['getCallback'])
+                ->disableOriginalConstructor()
+                ->getMock();
+        $defaults->expects($this->once())
+                ->method('getCallback')
+                ->willReturn(['id' => '123', 'method' => 'test']);
+
+        $mock = $this->getMockBuilder(ImporterArray::class)
+                ->setMethods(['getDefaults'])
+                ->disableOriginalConstructor()
+                ->getMock();
+        $mock->expects($this->once())
+                ->method('getDefaults')
+                ->willReturn($defaults);
+
+        $this->assertInstanceOf(Replacer::class, $mock->createTypedElement($data));
     }
 
     public function testCreateTypedElementWithExceptionByWrongType()
@@ -90,6 +138,25 @@ final class ImporterArrayTest extends TestCase
         $this->expectException(\TypeError::class);
 
         $this->importer->createTypedElement(new \stdClass);
+    }
+
+    public function testGetDefaults()
+    {
+        $className = ImporterArray::class;
+
+        $defaults = $this->createMock(ImporterArrayDefaultsModel::class);
+
+        $mock = $this->getMockBuilder($className)
+                ->setMethods(['import'])
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $reflectedClass = new \ReflectionClass($className);
+        $property = $reflectedClass->getProperty('defaults');
+        $property->setAccessible(true);
+        $property->setValue($mock, $defaults);
+
+        $this->assertEquals($defaults, $mock->getDefaults());
     }
 
     public function testGetInstance()
@@ -129,17 +196,20 @@ final class ImporterArrayTest extends TestCase
 
     public function testImportNodeList()
     {
-        $this->assertInstanceOf(NodeList::class, $this->importer->importNodeList(['string', 123], true));
+        $this->assertInstanceOf(NodeList::class, $this->importer->importNodeList([
+                    'string', 123], true));
     }
 
     public function testImportNodeListReturnArray()
     {
-        $this->assertContainsOnlyInstancesOf(Text::class, $this->importer->importNodeList(['string', 123]));
+        $this->assertContainsOnlyInstancesOf(Text::class, $this->importer->importNodeList([
+                    'string', 123]));
     }
 
     public function testImportNodeListEmpty()
     {
-        $this->assertInstanceOf(NodeList::class, $this->importer->importNodeList([], true));
+        $this->assertInstanceOf(NodeList::class, $this->importer->importNodeList([
+                        ], true));
     }
 
     public function testImportNodeListEmptyReturnArrayEmpty()

@@ -2,15 +2,10 @@
 
 namespace Ht7\Base\Tests\Integration;
 
-use \BadMethodCallException;
-use \InvalidArgumentException;
-use \stdClass;
 use \PHPUnit\Framework\TestCase;
 use \Ht7\Html\Callback;
 use \Ht7\Html\Node;
 use \Ht7\Html\Tag;
-use \Ht7\Html\Lists\AttributeList;
-use \Ht7\Html\Lists\NodeList;
 
 class CallbackTest extends TestCase
 {

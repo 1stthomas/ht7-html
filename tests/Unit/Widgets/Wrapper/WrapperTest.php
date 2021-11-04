@@ -13,10 +13,10 @@ class WrapperTest extends TestCase
     public function testConstructorWith()
     {
         $className = Wrapper::class;
-        $model = $this->getMockForAbstractClass(WrapperModel::class);
+        $model = $this->createMock(WrapperModel::class);
         $view = $this->getMockBuilder(WrapperView::class)
                 ->setMethods(['setModel'])
-                ->getMockForAbstractClass();
+                ->getMock();
 
         $view->expects($this->once())
                 ->method('setModel')

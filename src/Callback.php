@@ -76,8 +76,8 @@ class Callback extends Node
 
     protected function createModel(array $content)
     {
-        $parameters = isset($content['parameters']) ? $content['parameters'] : [];
-        print_r(array_keys($content));
+        $parameters = isset($content['parameters']) ?
+                $content['parameters'] : [];
 
         if (!empty($content['callable'])) {
             $this->model = new CallbackWithCallableModel($content['callable'], $parameters);
@@ -120,16 +120,18 @@ class Callback extends Node
                     $model->getCallable(),
                     [$model->getParameters()]
             );
-        } elseif (empty($model)) {
+        }
+
+        if (empty($model)) {
             $e = 'Missing model.';
 
             throw new \BadMethodCallException($e);
-        } else {
-            $e = 'Unsupported model '
-                    . is_object($model) ? get_class($model) : gettype($model);
-
-            throw new \BadMethodCallException($e);
         }
+
+        $e = 'Unsupported model '
+                . is_object($model) ? get_class($model) : gettype($model);
+
+        throw new \BadMethodCallException($e);
     }
 
 }

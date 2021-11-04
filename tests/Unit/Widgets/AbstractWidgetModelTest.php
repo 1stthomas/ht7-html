@@ -17,7 +17,7 @@ class AbstractWidgetModelTest extends TestCase
         $mock = $this->getMockBuilder($className)
                 ->setMethods(['setData'])
                 ->disableOriginalConstructor()
-                ->getMock();
+                ->getMockForAbstractClass();
 
         $mock->expects($this->once())
                 ->method('setData')
@@ -37,7 +37,7 @@ class AbstractWidgetModelTest extends TestCase
         $mock = $this->getMockBuilder($className)
                 ->setMethods(['setData'])
                 ->disableOriginalConstructor()
-                ->getMock();
+                ->getMockForAbstractClass();
 
         $reflectedClass = new \ReflectionClass($className);
         $property = $reflectedClass->getProperty('data');
@@ -57,7 +57,7 @@ class AbstractWidgetModelTest extends TestCase
         $mock = $this->getMockBuilder($className)
                 ->setMethods(['getData'])
                 ->disableOriginalConstructor()
-                ->getMock();
+                ->getMockForAbstractClass();
 
         $mock->setData($data);
 

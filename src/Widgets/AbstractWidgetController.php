@@ -84,6 +84,12 @@ abstract class AbstractWidgetController implements \JsonSerializable, Renderable
                         ->jsonSerialize();
     }
 
+    public function reset()
+    {
+        $this->getModel()->reset();
+        $this->getView()->reset();
+    }
+
     /**
      * Set the model instance of the current table widget.
      *

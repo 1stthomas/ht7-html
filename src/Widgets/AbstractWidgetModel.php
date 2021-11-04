@@ -46,4 +46,5 @@ abstract class AbstractWidgetModel implements Modelable
         $this->data = $data;
     }
 
+    abstract public function reset();
 }

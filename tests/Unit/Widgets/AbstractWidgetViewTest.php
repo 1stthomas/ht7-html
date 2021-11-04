@@ -18,7 +18,7 @@ class AbstractWidgetViewTest extends TestCase
         $iL = $this->createMock(NodeList::class);
 
         $mock = $this->getMockBuilder($className)
-                ->setMethods(['getModel'])
+                ->setMethods(['setModel', 'setItemList'])
                 ->disableOriginalConstructor()
                 ->getMockForAbstractClass();
 
@@ -45,7 +45,7 @@ class AbstractWidgetViewTest extends TestCase
         $iL = $this->createMock(NodeList::class);
 
         $mock = $this->getMockBuilder($className)
-                ->setMethods(['getModel'])
+                ->setMethods(['setModel', 'setItemList'])
                 ->disableOriginalConstructor()
                 ->getMockForAbstractClass();
 
@@ -71,7 +71,7 @@ class AbstractWidgetViewTest extends TestCase
         $model = $this->getMockForAbstractClass(AbstractWidgetModel::class);
 
         $mock = $this->getMockBuilder($className)
-                ->setMethods(['getModel'])
+                ->setMethods(['setModel', 'setItemList'])
                 ->disableOriginalConstructor()
                 ->getMockForAbstractClass();
 
@@ -133,6 +133,25 @@ class AbstractWidgetViewTest extends TestCase
         $property->setValue($mock, $iL);
 
         $this->assertEquals($iL, $mock->getItemList());
+    }
+
+    public function testGetModel()
+    {
+        $className = AbstractWidgetView::class;
+
+        $model = $this->getMockForAbstractClass(AbstractWidgetModel::class);
+
+        $mock = $this->getMockBuilder($className)
+                ->setMethods(['setModel'])
+                ->disableOriginalConstructor()
+                ->getMockForAbstractClass();
+
+        $reflectedClass = new \ReflectionClass($className);
+        $property = $reflectedClass->getProperty('model');
+        $property->setAccessible(true);
+        $property->setValue($mock, $model);
+
+        $this->assertEquals($model, $mock->getModel());
     }
 
     public function testRender()

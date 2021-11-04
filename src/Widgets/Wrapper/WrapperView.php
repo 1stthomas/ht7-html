@@ -29,7 +29,6 @@ class WrapperView extends AbstractWidgetView
         /* @var $importer ImporterArray */
         $importer = ImporterArray::getInstance();
         $importer->getDefaults()->setCallback($model->getCallback());
-//        $importer = new ImporterArray(['callback' => $model->getCallback()]);
 
         $tag = $importer->import($model->getMarkup());
 

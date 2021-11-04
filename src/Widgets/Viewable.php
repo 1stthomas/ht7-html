@@ -34,6 +34,11 @@ interface Viewable
     public function render();
 
     /**
+     * Reset the present view.
+     */
+    public function reset();
+
+    /**
      * Set the element list of the present widget.
      *
      * @param NodeList $iL

@@ -154,7 +154,6 @@ class ImporterArray extends AbstractImporter
                 if (isset($input['tag'])) {
                     return $this->createTag($input);
                 } elseif (isset($input['type'])) {
-                    echo "typed el...\n";
                     return $this->createTypedElement($input);
                 } else {
                     $e = 'Missing "tag" or "type" key. Found only: ["'

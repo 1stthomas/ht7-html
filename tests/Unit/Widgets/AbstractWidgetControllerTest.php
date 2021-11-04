@@ -3,6 +3,7 @@
 namespace Ht7\Html\Tests\Unit\Widgets;
 
 use \PHPUnit\Framework\TestCase;
+use \Ht7\Html\Lists\NodeList;
 use \Ht7\Html\Widgets\AbstractWidgetController;
 use \Ht7\Html\Widgets\AbstractWidgetModel;
 use \Ht7\Html\Widgets\AbstractWidgetView;
@@ -82,10 +83,66 @@ class AbstractWidgetControllerTest extends TestCase
 
     public function testJsonSerialize()
     {
-        // @todo...
-        // atm the callback fails to replace the value when encoding.
+        $className = AbstractWidgetController::class;
 
-        $this->assertTrue(true);
+        $iL = $this->getMockBuilder(NodeList::class)
+                ->setMethods(['jsonSerialize'])
+                ->disableOriginalConstructor()
+                ->getMock();
+        $iL->expects($this->once())
+                ->method('jsonSerialize')
+                ->willReturn('{"test":"return value"}');
+
+        $view = $this->getMockBuilder(AbstractWidgetView::class)
+                ->setMethods(['render'])
+                ->disableOriginalConstructor()
+                ->getMockForAbstractClass();
+        $view->expects($this->once())
+                ->method('render')
+                ->willReturn($iL);
+
+        $mock = $this->getMockBuilder($className)
+                ->setMethods(['getView'])
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $mock->expects($this->once())
+                ->method('getView')
+                ->willReturn($view);
+
+        $this->assertStringContainsString('return value', json_encode($mock));
+    }
+
+    public function testReset()
+    {
+        $className = AbstractWidgetController::class;
+
+        $model = $this->getMockBuilder(AbstractWidgetModel::class)
+                ->setMethods(['reset'])
+                ->disableOriginalConstructor()
+                ->getMockForAbstractClass();
+        $model->expects($this->once())
+                ->method('reset');
+        $view = $this->getMockBuilder(AbstractWidgetView::class)
+                ->setMethods(['reset'])
+                ->disableOriginalConstructor()
+                ->getMockForAbstractClass();
+        $view->expects($this->once())
+                ->method('reset');
+
+        $mock = $this->getMockBuilder($className)
+                ->setMethods(['getModel', 'getView'])
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $mock->expects($this->once())
+                ->method('getModel')
+                ->willReturn($model);
+        $mock->expects($this->once())
+                ->method('getView')
+                ->willReturn($view);
+
+        $mock->reset();
     }
 
     public function testSetModel()

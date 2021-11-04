@@ -83,6 +83,57 @@ class CallbackTest extends TestCase
         $this->assertInstanceOf(CallbackWithCallableModel::class, $property->getValue($mock));
     }
 
+    public function testCreateModelInstance()
+    {
+        $className = Callback::class;
+
+        $content = [
+            'type' => 'callback',
+            'instance' => $this,
+            'method' => 'testMethod',
+        ];
+
+        $mock = $this->getMockBuilder($className)
+                ->setMethods(['process'])
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $reflectedClass = new \ReflectionClass($className);
+        $method = $reflectedClass->getMethod('createModel');
+        $method->setAccessible(true);
+
+        $method->invokeArgs($mock, [$content]);
+
+        $property = $reflectedClass->getProperty('model');
+        $property->setAccessible(true);
+
+        $this->assertInstanceOf(CallbackWithInstanceModel::class, $property->getValue($mock));
+    }
+
+    public function testCreateModelInstanceWithException()
+    {
+        $className = Callback::class;
+
+        $content = [
+            'type' => 'callback',
+            'instance' => $this,
+        ];
+
+        $mock = $this->getMockBuilder($className)
+                ->setMethods(['process'])
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $reflectedClass = new \ReflectionClass($className);
+        $method = $reflectedClass->getMethod('createModel');
+        $method->setAccessible(true);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Missing method.');
+
+        $method->invokeArgs($mock, [$content]);
+    }
+
     public function testCreateModelMethod()
     {
         $className = Callback::class;
@@ -107,6 +158,50 @@ class CallbackTest extends TestCase
         $property->setAccessible(true);
 
         $this->assertInstanceOf(CallbackWithMethodModel::class, $property->getValue($mock));
+    }
+
+    public function testCreateModelMethodWithException()
+    {
+        $className = Callback::class;
+
+        $content = [
+            'type' => 'callback',
+        ];
+
+        $mock = $this->getMockBuilder($className)
+                ->setMethods(['process'])
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $reflectedClass = new \ReflectionClass($className);
+        $method = $reflectedClass->getMethod('createModel');
+        $method->setAccessible(true);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Missing method.');
+
+        $method->invokeArgs($mock, [$content]);
+    }
+
+    public function testGetModel()
+    {
+        $className = Callback::class;
+
+        $model = $this->getMockBuilder(CallbackWithMethodModel::class)
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $mock = $this->getMockBuilder($className)
+                ->setMethods(['process'])
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $reflectedClass = new \ReflectionClass($className);
+        $property = $reflectedClass->getProperty('model');
+        $property->setAccessible(true);
+        $property->setValue($mock, $model);
+
+        $this->assertEquals($model, $mock->getModel());
     }
 
     public function testJsonSerialize()
@@ -227,13 +322,14 @@ class CallbackTest extends TestCase
                 ->getMock();
         $mock->expects($this->once())
                 ->method('getModel')
-                ->willReturn(null);
+                ->willReturn(0);
 
         $reflectedClass = new \ReflectionClass($className);
         $method = $reflectedClass->getMethod('process');
         $method->setAccessible(true);
 
         $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Missing model.');
 
         $method->invokeArgs($mock, []);
     }

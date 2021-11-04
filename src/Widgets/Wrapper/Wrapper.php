@@ -43,35 +43,6 @@ class Wrapper extends AbstractWidgetController
 
             $model->setCallback($callback);
         }
-
-        $markup = [
-            'tag' => 'div',
-            'attributes' => ['class' => 'container'],
-            'content' => [
-                [
-                    'tag' => 'div',
-                    'attributes' => ['class' => 'col-xs-12 col-sm-6'],
-                    'content' => [
-                        [
-                            'type' => 'replacer',
-                            'id' => 'test-12345'
-                        ],
-                    ],
-                ],
-                [
-                    'tag' => 'div',
-                    'attributes' => ['class' => 'col-xs-12 col-sm-6'],
-                    'content' => [
-                        [
-                            'type' => 'replacer',
-                            'id' => 'test-67890'
-                        ],
-                    ],
-                ],
-            ],
-        ];
-
-        $model->setMarkup($markup);
     }
 
 }
