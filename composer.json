@@ -11,6 +11,11 @@
             "role": "Developer"
         }
     ],
+    "archive": {
+        "exclude": [
+            "/tests", "/.github", "/phpunit.xml"
+        ]
+    },
     "autoload": {
         "psr-4": {
             "Ht7\\Html\\": "src/"
@@ -34,7 +39,7 @@
         }
     ],
     "require": {
-        "php": "^7.0",
+        "php": "^7.0|^8.0",
         "ht7/ht7-base": "master"
     },
     "require-dev": {

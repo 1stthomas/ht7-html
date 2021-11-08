@@ -27,23 +27,23 @@
 >
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">../src</directory>
+            <directory suffix=".php">src</directory>
             <exclude>
-                <directory>../api</directory>
-                <directory>../tests/Integration</directory>
-                <directory>../src/Widgets/Table</directory>
-                <file>../src/Renderable.php</file>
-                <file>../src/Lists/AbstractRenderableList.php</file>
-                <file>../src/Tags/AbstractSourceContainer.php</file>
-                <file>../src/Widgets/Modelable.php</file>
-                <file>../src/Widgets/Viewable.php</file>
-                <file>../src/Widgets/Table/Models/Modelable.php</file>
-                <file>../src/Widgets/Wrapper/Markups/Bootstrap.php</file>
+                <directory>api</directory>
+                <directory>tests/Integration</directory>
+                <directory>src/Widgets/Table</directory>
+                <file>src/Renderable.php</file>
+                <file>src/Lists/AbstractRenderableList.php</file>
+                <file>src/Tags/AbstractSourceContainer.php</file>
+                <file>src/Widgets/Modelable.php</file>
+                <file>src/Widgets/Viewable.php</file>
+                <file>src/Widgets/Table/Models/Modelable.php</file>
+                <file>src/Widgets/Wrapper/Markups/Bootstrap.php</file>
             </exclude>
         </whitelist>
     </filter>
     <logging>
-        <log type="junit" target="..\..\logs\phpunit_ht7-test.xml"/>
+        <log type="junit" target="logs\phpunit_ht7-test.xml"/>
     </logging>
     <php>
         <ini name="display_errors" value="1" />
@@ -52,10 +52,10 @@
     </php>
     <testsuites>
         <testsuite name="ht7 html - unit">
-            <directory>./Unit/</directory>
+            <directory>tests/Unit</directory>
         </testsuite>
         <testsuite name="ht7 html - integration">
-            <directory>./Integration/</directory>
+            <directory>tests/Integration</directory>
         </testsuite>
     </testsuites>
 </phpunit>
