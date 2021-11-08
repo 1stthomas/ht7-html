@@ -91,13 +91,13 @@ jobs:
 
       - name: "Tests"
         if: env.CODE_COVERAGE == 'n'
-        run: php ./vendor/phpunit/phpunit/phpunit --verbose
+        run: php ./vendor/phpunit/phpunit/phpunit --debug
         # Same as above
 #        continue-on-error: ${{ matrix.php-version == '8.1' }}
 
       - name: "Tests with coverage"
         if: env.CODE_COVERAGE == 'y'
-        run: php ./vendor/phpunit/phpunit/phpunit --coverage-clover=coverage.clover --verbose
+        run: php ./vendor/phpunit/phpunit/phpunit --coverage-clover=coverage.clover --debug
 
 #      - name: "Upload coverage"
 #        if: env.CODE_COVERAGE == 'y'
