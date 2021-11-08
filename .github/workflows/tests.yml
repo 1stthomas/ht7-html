@@ -91,7 +91,7 @@ jobs:
 
       - name: "Tests"
         if: env.CODE_COVERAGE == 'n'
-        run: php ./vendor/phpunit/phpunit/phpunit
+        run: php ./vendor/phpunit/phpunit/phpunit --verbose
         # Same as above
 #        continue-on-error: ${{ matrix.php-version == '8.1' }}
 
