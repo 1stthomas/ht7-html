@@ -37,15 +37,16 @@ jobs:
           - php-version: 7.2
             operating-system: "ubuntu-latest"
             dependencies: "locked"
-            composer: "composer:v1, prestissimo"
+            composer: "composer:v1"
+#            composer: "composer:v1, prestissimo"
           - php-version: 7.3
             operating-system: "ubuntu-latest"
             dependencies: "locked"
-            composer: "composer:v1, prestissimo"
+            composer: "composer:v1"
           - php-version: 7.4
             operating-system: "ubuntu-latest"
             dependencies: "locked"
-            composer: "composer:v1, prestissimo"
+            composer: "composer:v1"
 #          - php-version: 8.1
 #            operating-system: "ubuntu-latest"
 #            dependencies: "locked"
