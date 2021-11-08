@@ -16,7 +16,7 @@ on:
         default: '7.3'
 
 jobs:
-  build:
+  unit-tests:
 
     runs-on: ubuntu-latest
 
@@ -24,28 +24,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+      - name: Setup Composer
+        uses: php-actions/composer@v5
+
+#      - name: Install dependencies
+#        run: composer install --prefer-dist --no-progress
+
+      - name: PHPUnit tests
+        uses: php-actions/phpunit@v3
         with:
-          php-version: '7.3'
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, redis, memcached
-          tools: composer:v2
-          coverage: none
-
-      - name: Cache Composer packages
-        id: composer-cache
-        uses: actions/cache@v2
-        with:
-          path: vendor
-          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-php-
-
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress
-
-    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-    # Docs: https://getcomposer.org/doc/articles/scripts.md
-
-      - name: Run test suite
-        run: composer test-unit
+          configuration: tests/configuration.xml
+          bootstrap: tests/bootstrap.php
+          php_version: 7.3
