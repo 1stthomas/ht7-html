@@ -24,8 +24,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Setup Composer
-        uses: php-actions/composer@v5
+      - name: Install dependencies
+        uses: php-actions/composer@v6
+        with:
+          php_version: 7.3
+          version: 1
 
 #      - name: Install dependencies
 #        run: composer install --prefer-dist --no-progress
@@ -35,4 +38,4 @@ jobs:
         with:
           configuration: tests/configuration.xml
           bootstrap: tests/bootstrap.php
-          php_version: 7.3
+#          php_version: 7.3
