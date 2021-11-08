@@ -52,10 +52,10 @@
     </php>
     <testsuites>
         <testsuite name="ht7 html - unit">
-            <directory>./unit/</directory>
+            <directory>./Unit/</directory>
         </testsuite>
-        <testsuite name="ht7 html - functional">
-            <directory>./Functional/</directory>
+        <testsuite name="ht7 html - integration">
+            <directory>./Integration/</directory>
         </testsuite>
     </testsuites>
 </phpunit>
