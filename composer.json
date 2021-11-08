@@ -44,7 +44,7 @@
     "prefer-stable": true,
     "scripts": {
         "test": ".\\vendor\\bin\\phpunit --configuration .\\tests\\configuration.xml --colors --testdox",
-        "test-unit": "php ./vendor/phpunit/phpunit/phpunit --colors --bootstrap ./tests/bootstrap.php --configuration ./tests/configuration.xml",
+        "test-unit": "php vendor/phpunit/phpunit/phpunit --colors --bootstrap tests/bootstrap.php --configuration tests/configuration.xml",
         "test-unit1": "php ./vendor/phpunit/phpunit/phpunit --colors --bootstrap ./tests/bootstrap.php --configuration ./tests/configuration.xml --testsuite \"ht7 html - unit\"",
         "test-func": "php ./vendor/phpunit/phpunit/phpunit --colors --bootstrap ./tests/bootstrap.php --configuration ./tests/configuration.xml --testsuite \"ht7 html - functional\"",
         "test-unit-win": "php .\\vendor\\phpunit\\phpunit\\phpunit --colors --bootstrap .\\tests\\bootstrap.php --configuration .\\tests\\configuration.xml --testsuite \"ht7 html - unit\"",
