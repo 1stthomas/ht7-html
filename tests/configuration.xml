@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
+    backupGlobals="true"
+    backupStaticAttributes="true"
+    bootstrap="bootstrap.php"
+    cacheResult="false"
+    colors="true"
+    convertErrorsToExceptions="true"
+    convertNoticesToExceptions="true"
+    convertWarningsToExceptions="true"
+    forceCoversAnnotation="false"
+    processIsolation="false"
+    stopOnError="false"
+    stopOnFailure="false"
+    stopOnIncomplete="false"
+    stopOnSkipped="false"
+    stopOnRisky="false"
+    timeoutForSmallTests="1"
+    timeoutForMediumTests="10"
+    timeoutForLargeTests="60"
+    verbose="true"
+>
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+        <exclude>
+            <directory>api</directory>
+            <directory>tests/Integration</directory>
+            <directory>src/Widgets/Table</directory>
+            <file>src/Renderable.php</file>
+            <file>src/Lists/AbstractRenderableList.php</file>
+            <file>src/Tags/AbstractSourceContainer.php</file>
+            <file>src/Widgets/Modelable.php</file>
+            <file>src/Widgets/Viewable.php</file>
+            <file>src/Widgets/Table/Models/Modelable.php</file>
+            <file>src/Widgets/Wrapper/Markups/Bootstrap.php</file>
+        </exclude>
+    </coverage>
+    <logging>
+        <junit outputFile="../../logs/phpunit_ht7-html.xml"/>
+        <text outputFile="../../logs/phpunit_ht7-html.txt"/>
+    </logging>
+    <php>
+        <ini name="display_errors" value="1" />
+        <ini name="display_startup_errors" value="1" />
+        <ini name="error_reporting" value="E_ALL|E_STRICT" />
+    </php>
+    <testsuites>
+        <testsuite name="unit">
+            <directory>Unit</directory>
+        </testsuite>
+        <testsuite name="integration">
+            <directory>Integration</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
