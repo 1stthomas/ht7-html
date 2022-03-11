@@ -32,7 +32,6 @@ use \Ht7\Html\Models\SelfClosing;
  */
 class Tag extends Node implements IteratorAggregate
 {
-
     /**
      * @var     AttributeList
      */
@@ -64,7 +63,6 @@ class Tag extends Node implements IteratorAggregate
         $this->setContent($content);
         $this->setAttributes($attributes);
     }
-
     /**
      * Get a string representation of the current tag instance.
      *
@@ -87,7 +85,6 @@ class Tag extends Node implements IteratorAggregate
 
         return $html;
     }
-
     /**
      * Get the defined attributes of the current tag instance.
      *
@@ -97,7 +94,6 @@ class Tag extends Node implements IteratorAggregate
     {
         return $this->attributes;
     }
-
     /**
      * Get the content of the current HTML element.
      *
@@ -107,7 +103,6 @@ class Tag extends Node implements IteratorAggregate
     {
         return parent::getContent();
     }
-
     /**
      * Get an iterator instance to iterate the current Tag.
      *
@@ -115,11 +110,10 @@ class Tag extends Node implements IteratorAggregate
      *
      * @return  Iterator
      */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         return $this->getIteratorPreOrder();
     }
-
     /**
      * Get the tag name of the current element.
      *
@@ -129,7 +123,6 @@ class Tag extends Node implements IteratorAggregate
     {
         return $this->tagName;
     }
-
     /**
      * Get a tree iterator which goes first every tree up before searching the
      * next.
@@ -138,7 +131,6 @@ class Tag extends Node implements IteratorAggregate
 //    {
 //
 //    }
-
     /**
      * Get a tree iterator which searches first every sibling before going up to
      * the next level.
@@ -149,7 +141,6 @@ class Tag extends Node implements IteratorAggregate
     {
         return new PreOrderIterator($this);
     }
-
     /**
      * Whetever the current tag is self closing or not.
      *
@@ -159,11 +150,10 @@ class Tag extends Node implements IteratorAggregate
     {
         return SelfClosing::is($this->getTagName());
     }
-
     /**
      * {@inheritdoc}
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
             'attributes' => $this->getAttributes(),
@@ -171,7 +161,6 @@ class Tag extends Node implements IteratorAggregate
             'tag' => $this->getTagName()
         ];
     }
-
     /**
      * Set the attributes of the current HTML element.
      *
@@ -195,7 +184,6 @@ class Tag extends Node implements IteratorAggregate
             );
         }
     }
-
     /**
      * Set the inner content of the current tag.
      *
@@ -208,17 +196,16 @@ class Tag extends Node implements IteratorAggregate
      * @param   mixed       $content        The content of the current Tag
      *                                      instance. This must be a NodeList
      *                                      instance or an array.
-     * @throws  BadMethodCallException
-     * @throws  InvalidArgumentException
+     * @throws  \BadMethodCallException
      */
     public function setContent($content)
     {
         if (!empty($content) && $this->isSelfClosing()) {
             $msg = 'This tag (%s) can not have content, because it is self'
-                    . ' closing.';
+                . ' closing.';
             $e = sprintf($msg, gettype($this->getTagName()));
 
-            throw new BadMethodCallException($e);
+            throw new \BadMethodCallException($e);
         }
 
         if (is_scalar($content) || $content instanceof Node) {
@@ -227,7 +214,6 @@ class Tag extends Node implements IteratorAggregate
 
         $this->content = $content instanceof NodeList ? $content : new NodeList($content);
     }
-
     /**
      * Set the name of the current tag.
      *
@@ -239,8 +225,8 @@ class Tag extends Node implements IteratorAggregate
         if (is_string($name)) {
             $this->tagName = $name;
         } else {
-            throw new InvalidDatatypeException('tag name', $name, ['string']);
+            throw new \InvalidArgumentException('Unsupported data type ' . gettype($name));
+//            throw new InvalidDatatypeException('tag name', $name, ['string']);
         }
     }
-
 }

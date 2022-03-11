@@ -17,14 +17,12 @@ class AttributeList extends HashList implements \JsonSerializable, Renderable
 {
 
     use CanRenderList;
-
     public function __construct(array $data = [])
     {
         $this->divider = ' ';
 
         parent::__construct($data);
     }
-
     /**
      * {@inheritdoc}
      */
@@ -35,7 +33,6 @@ class AttributeList extends HashList implements \JsonSerializable, Renderable
 
         return implode($this->getDivider(), $all);
     }
-
     /**
      * Add an attribute to the present AttributeList.
      *
@@ -56,7 +53,6 @@ class AttributeList extends HashList implements \JsonSerializable, Renderable
             throw new InvalidArgumentException($e);
         }
     }
-
     /**
      * Add an attribute name and its value to the present AttributeList.
      *
@@ -68,7 +64,6 @@ class AttributeList extends HashList implements \JsonSerializable, Renderable
     {
         return $this->add((new Attribute($name, $value)));
     }
-
     /**
      * Check wheter a value can be found or not in the present AttributeList instance.
      *
@@ -91,15 +86,13 @@ class AttributeList extends HashList implements \JsonSerializable, Renderable
 
         return false;
     }
-
     /**
      * {@inheritdoc}
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->getAll();
     }
-
     /**
      * Load the present AttributeList instance with the submitted data.
      *
@@ -120,5 +113,4 @@ class AttributeList extends HashList implements \JsonSerializable, Renderable
             }
         }
     }
-
 }

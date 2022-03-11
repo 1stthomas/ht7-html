@@ -7,7 +7,6 @@ namespace Ht7\Html;
  */
 class Text extends Node
 {
-
     /**
      * Create an instance of the text element.
      *
@@ -17,7 +16,6 @@ class Text extends Node
     {
         $this->setContent($text);
     }
-
     /**
      * Get a string representation of the current class.
      *
@@ -27,7 +25,6 @@ class Text extends Node
     {
         return $this->getContent();
     }
-
     /**
      * Get the content.
      *
@@ -37,15 +34,13 @@ class Text extends Node
     {
         return parent::getContent();
     }
-
     /**
      * {@inheritdoc}
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->getContent();
     }
-
     /**
      * Set the content.
      *
@@ -64,5 +59,4 @@ class Text extends Node
             throw new \InvalidArgumentException($e);
         }
     }
-
 }

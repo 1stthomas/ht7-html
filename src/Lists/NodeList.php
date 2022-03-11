@@ -11,7 +11,6 @@ use \Ht7\Html\Utilities\ImporterArray;
  */
 class NodeList extends AbstractRenderableList implements \JsonSerializable
 {
-
     /**
      * {@inheritdoc}
      */
@@ -21,7 +20,6 @@ class NodeList extends AbstractRenderableList implements \JsonSerializable
 
         return $this;
     }
-
     /**
      * Serialize the object to a value that can beserialized natively by <code>json_encode</code>.
      *
@@ -32,7 +30,7 @@ class NodeList extends AbstractRenderableList implements \JsonSerializable
      *
      * @return  array               An array representation of this instance.
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
 //        $items = [];
 //        $all = $this->getAll();
@@ -44,5 +42,4 @@ class NodeList extends AbstractRenderableList implements \JsonSerializable
 //        return $items;
         return $this->getAll();
     }
-
 }
