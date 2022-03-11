@@ -6,3 +6,5 @@
 /composer.lock
 /php_errors.log
 /test*.php
+/coverage.clover
+/.php-cs-fixer.cache

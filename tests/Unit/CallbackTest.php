@@ -284,8 +284,12 @@ class CallbackTest extends TestCase
     {
         if (file_exists('./assets/functions/callbacks.php')) {
             include_once './assets/functions/callbacks.php';
+        } elseif (file_exists('./../assets/functions/callbacks.php')) {
+            include_once './../assets/functions/callbacks.php';
+        } elseif (file_exists('./tests/assets/functions/callbacks.php')) {
+            include_once './tests/assets/functions/callbacks.php';
         } else {
-            throw new \BadMethodCallException('Missing callback functions file.');
+            throw new \BadMethodCallException('Missing callback functions file. - ' . getcwd());
         }
 
         $className = Callback::class;

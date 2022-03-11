@@ -11,6 +11,11 @@
             "role": "Developer"
         }
     ],
+    "archive": {
+        "exclude": [
+            "/tests", "/.github", "/phpunit.xml"
+        ]
+    },
     "autoload": {
         "psr-4": {
             "Ht7\\Html\\": "src/"
@@ -34,19 +39,16 @@
         }
     ],
     "require": {
-        "php": "^7.0",
-        "ht7/ht7-base": "master"
+        "php": "^7.0|^8.0",
+        "ht7/ht7-base": "dev-develop"
     },
     "require-dev": {
-        "phpunit/phpunit": "^7.0"
+        "phpunit/phpunit": "^8.0|^9.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
-        "test": ".\\vendor\\bin\\phpunit --configuration .\\tests\\configuration.xml --colors --testdox",
-        "test-unit": "php .\\vendor\\phpunit\\phpunit\\phpunit --colors --bootstrap .\\tests\\bootstrap.php --configuration .\\tests\\configuration.xml --testsuite \"ht7 html - unit\"",
-        "test-func": "php .\\vendor\\phpunit\\phpunit\\phpunit --colors --bootstrap .\\tests\\bootstrap.php --configuration .\\tests\\configuration.xml --testsuite \"ht7 html - functional\"",
-        "test-unit1": "C:\\dev\\PHP\\current\\php.exe \"C:\\data\\edv\\php\\misc\\ht7-html\\vendor\\phpunit\\phpunit\\phpunit\" \"--colors\" \"--log-junit\" \"C:\\Users\\zoom4u\\AppData\\Local\\Temp\\nb-phpunit-log.xml\" \"--bootstrap\" \"C:\\data\\edv\\php\\misc\\ht7-html\\tests\\bootstrap.php\" \"--configuration\" \"C:\\data\\edv\\php\\misc\\ht7-html\\tests\\configuration.xml\" \"--coverage-clover\" \"C:\\Users\\zoom4u\\AppData\\Local\\Temp\\nb-phpunit-coverage.xml\" \"C:\\Program Files\\NetBeans-11.2\\netbeans\\php\\phpunit\\NetBeansSuite.php",
-        "phpv": "php -v"
+        "test-unit": "php vendor/phpunit/phpunit/phpunit --colors --testdox --configuration tests/configuration.xml --testsuite unit",
+        "test-int": "php vendor/phpunit/phpunit/phpunit --colors --testdox --configuration tests/configuration.xml --testsuite integration"
     }
 }

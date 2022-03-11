@@ -8,18 +8,17 @@
 
 namespace Ht7\Html;
 
-use \InvalidArgumentException;
-use \Ht7\Base\Lists\HashListable;
-use \Ht7\Html\Renderable;
+use InvalidArgumentException;
+use Ht7\Base\Lists\Hashable;
+use Ht7\Html\Renderable;
 
 /**
  * Description of Attribute
  *
  * @author 1stthomas
  */
-class Attribute implements HashListable, \JsonSerializable, Renderable
+class Attribute implements Hashable, \JsonSerializable, Renderable
 {
-
     /**
      * @var     string      The attribute name.
      */
@@ -41,7 +40,6 @@ class Attribute implements HashListable, \JsonSerializable, Renderable
         $this->setName($name);
         $this->setValue($value);
     }
-
     /**
      * Get a string representation of the current class.
      *
@@ -54,7 +52,6 @@ class Attribute implements HashListable, \JsonSerializable, Renderable
 
         return $this->getName() . ($value === '' ? '' : '="' . $value . '"');
     }
-
     /**
      * @Overridden
      */
@@ -62,7 +59,6 @@ class Attribute implements HashListable, \JsonSerializable, Renderable
     {
         return $this->getName();
     }
-
     /**
      * Get the name of the present attribute.
      *
@@ -72,7 +68,6 @@ class Attribute implements HashListable, \JsonSerializable, Renderable
     {
         return $this->name;
     }
-
     /**
      * Get the value of the present attribute.
      *
@@ -82,15 +77,13 @@ class Attribute implements HashListable, \JsonSerializable, Renderable
     {
         return $this->value;
     }
-
     /**
      * {@inheritdoc}
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->getValue();
     }
-
     /**
      * Set the name of the current attribute instance.<br />
      * The name must be a string and must not be empty.
@@ -114,7 +107,6 @@ class Attribute implements HashListable, \JsonSerializable, Renderable
             throw new InvalidArgumentException($e);
         }
     }
-
     /**
      * Set the value of the current attribute instance.<br />
      * The value must be either string, int or float.
@@ -133,5 +125,4 @@ class Attribute implements HashListable, \JsonSerializable, Renderable
             throw new InvalidArgumentException($e);
         }
     }
-
 }
