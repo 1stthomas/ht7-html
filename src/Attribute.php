@@ -1,44 +1,17 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Ht7\Html;
 
-use InvalidArgumentException;
 use Ht7\Base\Lists\Hashable;
 use Ht7\Html\Renderable;
 
-/**
- * Description of Attribute
- *
- * @author 1stthomas
- */
 class Attribute implements Hashable, \JsonSerializable, Renderable
 {
     /**
-     * @var     string      The attribute name.
-     */
-    protected $name;
-
-    /**
-     * @var     string      The attribute value.
-     */
-    protected $value;
-
-    /**
      * Create an instance of the attribute class.
-     *
-     * @param   string  $name           The attribute name which must not be empty.
-     * @param   mixed   $value          The attribute value.
      */
-    public function __construct($name, $value)
+    public function __construct(protected string $name, protected string|float|int|bool $value)
     {
-        $this->setName($name);
-        $this->setValue($value);
     }
     /**
      * Get a string representation of the current class.
@@ -61,19 +34,15 @@ class Attribute implements Hashable, \JsonSerializable, Renderable
     }
     /**
      * Get the name of the present attribute.
-     *
-     * @return  string                  The attribute name.
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
     /**
      * Get the value of the present attribute.
-     *
-     * @return  mixed                   The attribute value.
      */
-    public function getValue()
+    public function getValue(): string|float|int|bool
     {
         return $this->value;
     }
@@ -86,43 +55,28 @@ class Attribute implements Hashable, \JsonSerializable, Renderable
     }
     /**
      * Set the name of the current attribute instance.<br />
-     * The name must be a string and must not be empty.
-     *
-     * @param   string  $name           The attribute name.
-     * @throws  InvalidArgumentException
+     * The name must not be empty.
      */
-    public function setName($name)
+    public function setName(string $name): static
     {
         if (empty($name)) {
-            $msg = 'The attribute name must not be empty.';
-            $e = sprintf($msg, gettype($name));
+            $e = 'The attribute name must not be empty.';
 
-            throw new InvalidArgumentException($e);
-        } elseif (is_string($name)) {
-            $this->name = $name;
-        } else {
-            $msg = 'The attribute name must be a string, found %s.';
-            $e = sprintf($msg, gettype($name));
-
-            throw new InvalidArgumentException($e);
+            throw new \InvalidArgumentException($e);
         }
+        
+        $this->name = $name;
+
+        return $this;
     }
     /**
      * Set the value of the current attribute instance.<br />
-     * The value must be either string, int or float.
-     *
-     * @param   mixed   $value          The attribute value.
-     * @throws  InvalidArgumentException
+     * The value must be either string, float, int or bool.
      */
-    public function setValue($value)
+    public function setValue(string|float|int|bool $value): static
     {
-        if (is_string($value) || is_int($value) || is_float($value)) {
-            $this->value = $value;
-        } else {
-            $msg = 'The attribute value must be a string, int or float, found %s.';
-            $e = sprintf($msg, gettype($value));
+        $this->value = $value;
 
-            throw new InvalidArgumentException($e);
-        }
+        return $this;
     }
 }
