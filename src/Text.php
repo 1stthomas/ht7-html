@@ -2,6 +2,8 @@
 
 namespace Ht7\Html;
 
+use Ht7\Html\Lists\NodeList;
+
 /**
  * This is a simple text node.
  */
@@ -12,7 +14,7 @@ class Text extends Node
      *
      * @param   string  $text           The content.
      */
-    public function __construct($text)
+    public function __construct(string $text)
     {
         $this->setContent($text);
     }
@@ -30,7 +32,7 @@ class Text extends Node
      *
      * @return  string                  The content of the current text element.
      */
-    public function getContent()
+    public function getContent(): NodeList|string
     {
         return parent::getContent();
     }
@@ -46,10 +48,10 @@ class Text extends Node
      *
      * Only scalar types will be accepted.
      *
-     * @param   mixed   $text               The content as string, integer or float.
+     * @param   NodeList|array|string|float|int|bool   $text               The content as string, integer, float or bool.
      * @throws  \InvalidArgumentException
      */
-    public function setContent($text)
+    public function setContent(NodeList|array|string|float|int|bool $text): static
     {
         if (is_scalar($text)) {
             $this->content = (string) $text;
@@ -58,5 +60,7 @@ class Text extends Node
 
             throw new \InvalidArgumentException($e);
         }
+
+        return $this;
     }
 }

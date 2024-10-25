@@ -2,19 +2,23 @@
 
 namespace Ht7\Html\Tests\Unit;
 
-use \PHPUnit\Framework\TestCase;
-use \Ht7\Html\Text;
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestDox;
+use PHPUnit\Framework\MockObject\MockObject;
+use Ht7\Html\Text;
 
 class TextTest extends TestCase
 {
-
-    public function testConstructor()
+    #[Test]
+    #[TestDox('Tag initialisation.')]
+    public function textConstructor(): void
     {
         $className = Text::class;
-        $content = ['test text'];
+        $content = 'test text';
 
         $mock = $this->getMockBuilder($className)
-                ->setMethods(['setContent'])
+                ->onlyMethods(['setContent'])
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -27,99 +31,103 @@ class TextTest extends TestCase
         $constructor->invoke($mock, $content);
     }
 
-    public function testGetContent()
+    #[Test]
+    #[TestDox('Get content.')]
+    public function getContent(): void
     {
         $className = Text::class;
         $content = 'test text';
 
-        $mock = $this->getMockBuilder($className)
-                ->setMethods(['jsonSerialize'])
-                ->disableOriginalConstructor()
-                ->getMock();
+        /** @var Text $sut */
+        $sut = $this->getMockText([]);
 
         $reflectedClass = new \ReflectionClass($className);
         $property = $reflectedClass->getProperty('content');
         $property->setAccessible(true);
 
-        $property->setValue($mock, $content);
+        $property->setValue($sut, $content);
 
-        $this->assertEquals($content, $mock->getContent());
+        $this->assertEquals($content, $sut->getContent());
     }
 
-    public function testJsonSerialize()
+    #[Test]
+    #[TestDox('Json serialize.')]
+    public function jsonSerialize(): void
     {
         $className = Text::class;
         $content = 'test text';
 
-        $mock = $this->getMockBuilder($className)
-                ->setMethods(['setContent'])
-                ->disableOriginalConstructor()
-                ->getMock();
+        $sut = $this->getMockText([]);
 
         $reflectedClass = new \ReflectionClass($className);
         $property = $reflectedClass->getProperty('content');
         $property->setAccessible(true);
 
-        $property->setValue($mock, $content);
+        $property->setValue($sut, $content);
 
         $expected = '"' . $content . '"';
-        $actual = json_encode($mock);
+        $actual = json_encode($sut);
 
         $this->assertEquals($expected, $actual);
     }
 
-    public function testSetContent()
+    #[Test]
+    #[TestDox('Set content.')]
+    public function setContent(): void
     {
         $className = Text::class;
         $content = 'test text';
 
-        $mock = $this->getMockBuilder($className)
-                ->setMethods(['jsonSerialize'])
-                ->disableOriginalConstructor()
-                ->getMock();
+        /** @var Text $sut */
+        $sut = $this->getMockText([]);
 
         $reflectedClass = new \ReflectionClass($className);
         $property = $reflectedClass->getProperty('content');
         $property->setAccessible(true);
 
-        $mock->setContent($content);
-        $this->assertEquals($content, $property->getValue($mock));
+        $sut->setContent($content);
+        $this->assertEquals($content, $property->getValue($sut));
 
         $content2 = 123;
-        $mock->setContent($content2);
-        $this->assertEquals($content2, $property->getValue($mock));
+        $sut->setContent($content2);
+        $this->assertEquals($content2, $property->getValue($sut));
 
         $content3 = 123.001;
-        $mock->setContent($content3);
-        $this->assertEquals($content3, $property->getValue($mock));
+        $sut->setContent($content3);
+        $this->assertEquals($content3, $property->getValue($sut));
     }
 
-    public function testSetContentWithException()
+    #[Test]
+    #[TestDox('Set content with an array and trigger exception.')]
+    public function setContentWithException(): void
     {
-        $mock = $this->getMockBuilder(Text::class)
-                ->setMethods(['jsonSerialize'])
-                ->disableOriginalConstructor()
-                ->getMock();
-
+        /** @var Text $sut */
+        $sut = $this->getMockText([]);
         $this->expectException(\InvalidArgumentException::class);
 
-        $mock->setContent([]);
+        $sut->setContent([]);
     }
 
-    public function testToString()
+    #[Test]
+    #[TestDox('Trigger __toString method.')]
+    public function render(): void
     {
         $expected = 'test text.';
 
-        $text = $this->getMockBuilder(Text::class)
-                ->setMethods(['getContent'])
-                ->disableOriginalConstructor()
-                ->getMock();
-
-        $text->expects($this->once())
+        $sut = $this->getMockText(['getContent']);
+        $sut->expects($this->once())
                 ->method('getContent')
                 ->willReturn($expected);
 
-        $this->assertEquals($expected, ((string) $text));
+        $this->assertEquals($expected, (string) $sut);
+    }
+
+    private function getMockText(array $methods): MockObject
+    {
+        return $this->getMockBuilder(Text::class)
+                ->onlyMethods($methods)
+                ->disableOriginalConstructor()
+                ->getMock();
     }
 
 }
