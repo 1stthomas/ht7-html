@@ -1,21 +1,11 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Ht7\Html;
 
-use \BadMethodCallException;
-use \InvalidArgumentException;
-use \IteratorAggregate;
-use \Ht7\Base\Exceptions\InvalidDatatypeException;
-use \Ht7\Html\Iterators\PreOrderIterator;
-use \Ht7\Html\Lists\AttributeList;
-use \Ht7\Html\Lists\NodeList;
-use \Ht7\Html\Models\SelfClosing;
+use Ht7\Html\Iterators\PreOrderIterator;
+use Ht7\Html\Lists\AttributeList;
+use Ht7\Html\Lists\NodeList;
+use Ht7\Html\Models\SelfClosing;
 
 /**
  * This class can build DOM like trees. To traverse them, there are two iterators:
@@ -30,27 +20,9 @@ use \Ht7\Html\Models\SelfClosing;
  *
  * @author Thomas Pluess
  */
-class Tag extends Node implements IteratorAggregate
+class Tag extends Node implements \IteratorAggregate
 {
-
-    /**
-     * @var     AttributeList
-     */
-    protected $attributes;
-
-    /**
-     * The content of the current HTML element.
-     *
-     * @var     NodeList    The content of the current tag, which can be a Text-
-     *                      or a Tag-instance.
-     */
-    protected $content;
-
-    /**
-     * @var     string      The name of the current HTML element.
-     */
-    protected $tagName;
-
+    protected AttributeList $attributes;
     /**
      * Create an instance of the Tag class.
      *
@@ -58,13 +30,11 @@ class Tag extends Node implements IteratorAggregate
      * @param   mixed   $content            The content of the current Tag instance.
      * @param   array   $attributes         Indexed array of Attribute instances.
      */
-    public function __construct($tagName = 'div', $content = [], array $attributes = [])
+    public function __construct(protected string $tagName = 'div', NodeList|array|string|float|int $content = [], AttributeList|array $attributes = [])
     {
-        $this->setTagName($tagName);
-        $this->setContent($content);
-        $this->setAttributes($attributes);
+        $this->setContent($content)
+            ->setAttributes($attributes);
     }
-
     /**
      * Get a string representation of the current tag instance.
      *
@@ -77,37 +47,27 @@ class Tag extends Node implements IteratorAggregate
         $attrStr = (string) $this->getAttributes();
         $attrStrSanitized = empty($attrStr) ? '' : ' ' . $attrStr;
 
-        if ($this->isSelfClosing()) {
-            $html = '<' . $tagName . $attrStrSanitized . ' />';
-        } else {
-            $html = '<' . $tagName . $attrStrSanitized . '>';
-            $html .= $this->getContent();
-            $html .= '</' . $tagName . '>';
-        }
-
-        return $html;
+        return "<{$tagName}{$attrStrSanitized}"
+            . ($this->isSelfClosing() ? ' />' : ">{$this->getContent()}</{$tagName}>");
     }
-
     /**
      * Get the defined attributes of the current tag instance.
      *
      * @return  AttributeList           The attributes of the present tag.
      */
-    public function getAttributes()
+    public function getAttributes(): AttributeList
     {
         return $this->attributes;
     }
-
     /**
      * Get the content of the current HTML element.
      *
      * @return  NodeList                The content of the current HTML element.
      */
-    public function getContent()
+    public function getContent(): NodeList
     {
         return parent::getContent();
     }
-
     /**
      * Get an iterator instance to iterate the current Tag.
      *
@@ -115,21 +75,19 @@ class Tag extends Node implements IteratorAggregate
      *
      * @return  Iterator
      */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         return $this->getIteratorPreOrder();
     }
-
     /**
      * Get the tag name of the current element.
      *
      * @return  string          The tag name.
      */
-    public function getTagName()
+    public function getTagName(): string
     {
         return $this->tagName;
     }
-
     /**
      * Get a tree iterator which goes first every tree up before searching the
      * next.
@@ -138,32 +96,25 @@ class Tag extends Node implements IteratorAggregate
 //    {
 //
 //    }
-
     /**
      * Get a tree iterator which searches first every sibling before going up to
      * the next level.
-     *
-     * @return PreOrderIterator
      */
-    public function getIteratorPreOrder()
+    public function getIteratorPreOrder(): PreOrderIterator
     {
         return new PreOrderIterator($this);
     }
-
     /**
      * Whetever the current tag is self closing or not.
-     *
-     * @return  boolean         True if the current element is self closing.
      */
-    public function isSelfClosing()
+    public function isSelfClosing(): bool
     {
         return SelfClosing::is($this->getTagName());
     }
-
     /**
      * {@inheritdoc}
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
             'attributes' => $this->getAttributes(),
@@ -171,31 +122,20 @@ class Tag extends Node implements IteratorAggregate
             'tag' => $this->getTagName()
         ];
     }
-
     /**
      * Set the attributes of the current HTML element.
      *
-     * @param   mixed   $attributes         Indexed array of
+     * @param   AttributeList|array   $attributes         Indexed array of
      *                                      <code>\Ht7\Html\Attribute</code>
      *                                      instances or an instance of
      *                                      <code>AttributeList</code>.
      */
-    public function setAttributes($attributes)
+    public function setAttributes(AttributeList|array $attributes): static
     {
-        if ($attributes instanceof AttributeList) {
-            $this->attributes = $attributes;
-        } elseif (is_array($attributes)) {
-            $this->attributes = new AttributeList($attributes);
-        } else {
-            throw new InvalidDatatypeException(
-                    'attributes',
-                    $attributes,
-                    ['array'],
-                    [NodeList::class]
-            );
-        }
-    }
+        $this->attributes = $attributes instanceof AttributeList ? $attributes : new AttributeList($attributes);
 
+        return $this;
+    }
     /**
      * Set the inner content of the current tag.
      *
@@ -205,20 +145,20 @@ class Tag extends Node implements IteratorAggregate
      * will be created. In this case the input validation will be delegated to
      * the NodeList.
      *
-     * @param   mixed       $content        The content of the current Tag
+     * @param   NodeList|array|string|float|int|bool     $content    The content of the current Tag
      *                                      instance. This must be a NodeList
      *                                      instance or an array.
-     * @throws  BadMethodCallException
-     * @throws  InvalidArgumentException
+     * @throws  \BadMethodCallException
      */
-    public function setContent($content)
+    // public function setContent(mixed $content): static
+    public function setContent(NodeList|array|string|float|int|bool $content): static
     {
-        if (!empty($content) && $this->isSelfClosing()) {
+        if ($this->isSelfClosing() && !empty($content)) {
             $msg = 'This tag (%s) can not have content, because it is self'
-                    . ' closing.';
+                . ' closing.';
             $e = sprintf($msg, gettype($this->getTagName()));
 
-            throw new BadMethodCallException($e);
+            throw new \BadMethodCallException($e);
         }
 
         if (is_scalar($content) || $content instanceof Node) {
@@ -226,21 +166,18 @@ class Tag extends Node implements IteratorAggregate
         }
 
         $this->content = $content instanceof NodeList ? $content : new NodeList($content);
-    }
 
+        return $this;
+    }
     /**
      * Set the name of the current tag.
      *
      * @param   string      $name           The tag name of the current HTML element.
-     * @throws  InvalidArgumentException
      */
-    public function setTagName($name)
+    public function setTagName(string $name): static
     {
-        if (is_string($name)) {
-            $this->tagName = $name;
-        } else {
-            throw new InvalidDatatypeException('tag name', $name, ['string']);
-        }
-    }
+        $this->tagName = $name;
 
+        return $this;
+    }
 }

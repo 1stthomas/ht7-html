@@ -1,61 +1,66 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <phpunit
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/7.4/phpunit.xsd"
     backupGlobals="true"
-    backupStaticAttributes="true"
     bootstrap="./bootstrap.php"
-    cacheResult="false"
-    cacheTokens="true"
     colors="true"
     convertErrorsToExceptions="true"
     convertNoticesToExceptions="true"
     convertWarningsToExceptions="true"
-    forceCoversAnnotation="false"
-    printerClass="PHPUnit\TextUI\ResultPrinter"
     processIsolation="false"
     stopOnError="false"
     stopOnFailure="false"
     stopOnIncomplete="false"
     stopOnSkipped="false"
     stopOnRisky="false"
-    testSuiteLoaderClass="PHPUnit\Runner\StandardTestSuiteLoader"
     timeoutForSmallTests="1"
     timeoutForMediumTests="10"
     timeoutForLargeTests="60"
     verbose="true"
 >
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
+    <coverage processUncoveredFiles="true">
+        <include>
             <directory suffix=".php">../src</directory>
-            <exclude>
-                <directory>../api</directory>
-                <directory>../tests/Integration</directory>
-                <directory>../src/Widgets/Table</directory>
-                <file>../src/Renderable.php</file>
-                <file>../src/Lists/AbstractRenderableList.php</file>
-                <file>../src/Tags/AbstractSourceContainer.php</file>
-                <file>../src/Widgets/Modelable.php</file>
-                <file>../src/Widgets/Viewable.php</file>
-                <file>../src/Widgets/Table/Models/Modelable.php</file>
-                <file>../src/Widgets/Wrapper/Markups/Bootstrap.php</file>
-            </exclude>
-        </whitelist>
-    </filter>
+        </include>
+        <exclude>
+            <directory>../api</directory>
+            <directory>../src/Iterators</directory>
+            <directory>../src/Lists</directory>
+            <directory>../src/Models</directory>
+            <directory>../src/Tags</directory>
+            <directory>../src/Utilities</directory>
+            <directory>../src/Widgets</directory>
+            <directory>../src/Widgets/Table</directory>
+            <directory>../tests/Integration</directory>
+            <file>../src/Attribute.php</file>
+            <file>../src/Callback.php</file>
+            <file>../src/Node.php</file>
+            <file>../src/Replacer.php</file>
+            <file>../src/Tag.php</file>
+            <file>../src/Renderable.php</file>
+            <file>../src/Lists/AbstractRenderableList.php</file>
+            <file>../src/Tags/AbstractSourceContainer.php</file>
+            <file>../src/Widgets/Modelable.php</file>
+            <file>../src/Widgets/Viewable.php</file>
+            <file>../src/Widgets/Table/Models/Modelable.php</file>
+            <file>../src/Widgets/Wrapper/Markups/Bootstrap.php</file>
+        </exclude>
+    </coverage>
     <logging>
-        <log type="junit" target="..\..\logs\phpunit_ht7-test.xml"/>
+        <junit outputFile="../../logs/phpunit_ht7-html.xml"/>
+        <text outputFile="../../logs/phpunit_ht7-html.txt"/>
     </logging>
     <php>
         <ini name="display_errors" value="1" />
         <ini name="display_startup_errors" value="1" />
         <ini name="error_reporting" value="E_ALL|E_STRICT" />
+        <ini name="error_log" value="php_errors.log" />
     </php>
     <testsuites>
-        <testsuite name="ht7 html - unit">
-            <directory>./unit/</directory>
+        <testsuite name="unit">
+            <directory>Unit</directory>
         </testsuite>
-        <testsuite name="ht7 html - functional">
-            <directory>./Functional/</directory>
+        <testsuite name="integration">
+            <directory>Integration</directory>
         </testsuite>
     </testsuites>
 </phpunit>

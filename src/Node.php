@@ -2,7 +2,8 @@
 
 namespace Ht7\Html;
 
-use \Ht7\Html\Renderable;
+use Ht7\Html\Renderable;
+use Ht7\Html\Lists\NodeList;
 
 /**
  * Base class.
@@ -12,33 +13,25 @@ use \Ht7\Html\Renderable;
 abstract class Node implements \JsonSerializable, Renderable
 {
 
-    /**
-     * The content of the current Node.
-     *
-     * @var     mixed       The content of the current Node, which can be a
-     *                      string, Text- or a Tag-instance.
-     */
-    protected $content;
+    protected NodeList|string $content;
 
     /**
-     * Get the content of the current HTML element.
-     *
-     * @return  NodeList                The content of the current HTML element.
+     * Get the content of the present HTML element.
      */
-    public function getContent()
+    public function getContent(): NodeList|string
     {
         return $this->content;
     }
 
     /**
-     * Set the inner content of the current tag.
+     * Set the inner content of the present HTML element.
      *
-     * This method will throw an exception if the current tag is self closing.
+     * This method will throw an exception if the present tag is self closing.
      *
-     * @param   mixed       $content        The content of the current Node
+     * @param   NodeList|array|string|float|int|bool     $content    The content of the current Node
      *                                      instance.
      * @throws  BadMethodCallException
      * @throws  InvalidArgumentException
      */
-    abstract public function setContent($content);
+    abstract public function setContent(NodeList|array|string|float|int|bool $content): static;
 }

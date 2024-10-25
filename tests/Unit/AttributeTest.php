@@ -4,168 +4,118 @@ namespace Ht7\Html\Tests\Unit;
 
 use \InvalidArgumentException;
 use \stdClass;
-use \PHPUnit\Framework\TestCase;
-use \Ht7\Html\Attribute;
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestDox;
+use PHPUnit\Framework\MockObject\MockObject;
+use Ht7\Html\Attribute;
 
 class AttributeTest extends TestCase
 {
+    private string $className = Attribute::class;
 
-    public function testConstructor()
+    #[Test]
+    #[TestDox('Get name.')]
+    public function getName(): void
     {
-        // see: http://miljar.github.io/blog/2013/12/20/phpunit-testing-the-constructor/
-        $className = Attribute::class;
-        $name = 'class';
-        $value = 'btn btn-primary';
+        $expected = 'class';
+        /** @var Attribute $sut */
+        $sut = $this->getSut(['setName']);
 
-        $mock = $this->getMockBuilder($className)
-                ->setMethods(['setName', 'setValue'])
-                ->disableOriginalConstructor()
-                ->getMock();
-
-        $mock->expects($this->once())
-                ->method('setName')
-                ->with($this->equalTo($name));
-        $mock->expects($this->once())
-                ->method('setValue')
-                ->with($this->equalTo($value));
-
-        $reflectedClass = new \ReflectionClass($className);
-        $constructor = $reflectedClass->getConstructor();
-        $constructor->invoke($mock, $name, $value);
-    }
-
-    public function testGetName()
-    {
-        $className = Attribute::class;
-
-        $mock = $this->getMockBuilder($className)
-                ->setMethods(['setName'])
-                ->disableOriginalConstructor()
-                ->getMock();
-
-        $reflectedClass = new \ReflectionClass($className);
+        $reflectedClass = new \ReflectionClass($this->className);
         $property = $reflectedClass->getProperty('name');
         $property->setAccessible(true);
+        $property->setValue($sut, $expected);
 
-        $expected = 'class';
-
-        $property->setValue($mock, $expected);
-
-        $this->assertEquals($expected, $mock->getName());
+        $this->assertEquals($expected, $sut->getName());
     }
 
-    public function testGetValue()
+    #[Test]
+    #[TestDox('Get value.')]
+    public function getValue(): void
     {
-        $className = Attribute::class;
+        $expected = 'btn btn-primary';
+        /** @var Attribute $sut */
+        $sut = $this->getSut(['setName']);
 
-        $mock = $this->getMockBuilder($className)
-                ->setMethods(['setValue'])
-                ->disableOriginalConstructor()
-                ->getMock();
-
-        $reflectedClass = new \ReflectionClass($className);
+        $reflectedClass = new \ReflectionClass($this->className);
         $property = $reflectedClass->getProperty('value');
         $property->setAccessible(true);
+        $property->setValue($sut, $expected);
 
-        $expected = 'btn btn-primary';
-
-        $property->setValue($mock, $expected);
-
-        $this->assertEquals($expected, $mock->getValue());
+        $this->assertEquals($expected, $sut->getValue());
     }
 
-    public function testJsonEncode()
+    #[Test]
+    #[TestDox('Json encode.')]
+    public function jsonEncode(): void
     {
-        $mock = $this->getMockBuilder(Attribute::class)
-                ->setMethods(['getValue'])
-                ->disableOriginalConstructor()
-                ->getMock();
+        $expected = '"btn btn-primary"';
+        $sut = $this->getSut(['getValue']);
 
-        $mock->expects($this->once())
+        $sut->expects($this->once())
                 ->method('getValue')
                 ->willReturn('btn btn-primary');
 
-        $expected = '"btn btn-primary"';
-
-        $this->assertEquals($expected, json_encode($mock));
+        $this->assertEquals($expected, json_encode($sut));
     }
 
-    public function testSetNameWithException()
+    #[Test]
+    #[TestDox('Set name with exception.')]
+    public function setNameWithException(): void
     {
-        $mock = $this->getMockBuilder(Attribute::class)
-                ->setMethods(['setValue']) // Without this, an exception would not been thrown.
-                ->disableOriginalConstructor()
-                ->getMock();
+        /** @var Attribute $sut */
+        $sut = $this->getSut(['setValue']);
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
-        $mock->setName((new stdClass()));
+        $sut->setName('');
     }
 
-    public function testSetNameEmptyWithException()
+    #[Test]
+    #[TestDox('Render the attribute.')]
+    public function render(): void
     {
-        $mock = $this->getMockBuilder(Attribute::class)
-                ->setMethods(['setValue']) // Without this, an exception would not been thrown.
-                ->disableOriginalConstructor()
-                ->getMock();
+        $expected = 'class="btn btn-primary"';
+        $sut = $this->getSut(['getName', 'getValue']);
 
-        $this->expectException(InvalidArgumentException::class);
-
-        $mock->setName('');
-    }
-
-    public function testSetValueWithException()
-    {
-        $mock = $this->getMockBuilder(Attribute::class)
-                ->setMethods(['setName']) // Without this, an exception would not been thrown.
-                ->disableOriginalConstructor()
-                ->getMock();
-
-        $this->expectException(InvalidArgumentException::class);
-
-        $mock->setValue((new stdClass()));
-    }
-
-    public function testToString()
-    {
-        $mock = $this->getMockBuilder(Attribute::class)
-                ->setMethods(['getName', 'getValue'])
-                ->disableOriginalConstructor()
-                ->getMock();
-
-        $mock->expects($this->once())
+        $sut->expects($this->once())
                 ->method('getName')
                 ->willReturn('class');
-        $mock->expects($this->once())
+        $sut->expects($this->once())
                 ->method('getValue')
                 ->willReturn('btn btn-primary');
 
-
-        $actual = (string) $mock;
-        $expected = 'class="btn btn-primary"';
+        $actual = (string) $sut;
 
         $this->assertEquals($expected, $actual);
     }
 
-    public function testToStringNoValue()
+    #[Test]
+    #[TestDox('Render the attribute with no value.')]
+    public function renderNoValue(): void
     {
-        $mock = $this->getMockBuilder(Attribute::class)
-                ->setMethods(['getName', 'getValue'])
-                ->disableOriginalConstructor()
-                ->getMock();
+        $expected = 'required';
+        $sut = $this->getSut(['getName', 'getValue']);
 
-        $mock->expects($this->once())
+        $sut->expects($this->once())
                 ->method('getName')
                 ->willReturn('required');
-        $mock->expects($this->once())
+        $sut->expects($this->once())
                 ->method('getValue')
                 ->willReturn('');
 
-
-        $actual = (string) $mock;
-        $expected = 'required';
+        $actual = (string) $sut;
 
         $this->assertEquals($expected, $actual);
+    }
+
+    private function getSut(array $methods): MockObject
+    {
+        return $this->getMockBuilder($this->className)
+                ->onlyMethods($methods)
+                ->disableOriginalConstructor()
+                ->getMock();
     }
 
 }

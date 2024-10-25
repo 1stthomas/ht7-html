@@ -2,48 +2,49 @@
 
 namespace Ht7\Html\Tests\Unit;
 
-use \BadMethodCallException;
-use \InvalidArgumentException;
-use \stdClass;
-use \PHPUnit\Framework\TestCase;
-use \Ht7\Html\Node;
-use \Ht7\Html\Tag;
-use \Ht7\Html\Iterators\PreOrderIterator;
-use \Ht7\Html\Lists\AttributeList;
-use \Ht7\Html\Lists\NodeList;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestDox;
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
+use Ht7\Html\Tag;
+use Ht7\Html\Text;
+use Ht7\Html\Iterators\PreOrderIterator;
+use Ht7\Html\Lists\AttributeList;
+use Ht7\Html\Lists\NodeList;
 
 class TagTest extends TestCase
 {
+    private string $className = Tag::class;
 
-    public function testConstructor()
+    #[Test]
+    #[TestDox('Tag initialisation.')]
+    public function tagConstructor(): void
     {
         // see: http://miljar.github.io/blog/2013/12/20/phpunit-testing-the-constructor/
-        $className = Tag::class;
         $tagName = 'span';
         $content = ['test text'];
         $attributes = ['class' => 'btn btn-primary'];
 
-        $mock = $this->getMockBuilder($className)
-                ->setMethods(['setTagName', 'setContent', 'setAttributes'])
-                ->disableOriginalConstructor()
-                ->getMock();
-
-        $mock->expects($this->once())
-                ->method('setTagName')
-                ->with($this->equalTo($tagName));
-        $mock->expects($this->once())
+        $sut = $this->getMockTag(['setTagName', 'setContent', 'setAttributes']);
+        $sut->expects($this->never())
+                ->method('setTagName');
+        $sut->expects($this->once())
                 ->method('setContent')
-                ->with($this->equalTo($content));
-        $mock->expects($this->once())
+                ->with($this->equalTo($content))
+                ->willReturnSelf();
+        $sut->expects($this->once())
                 ->method('setAttributes')
-                ->with($this->equalTo($attributes));
+                ->with($this->equalTo($attributes))
+                ->willReturnSelf();
 
-        $reflectedClass = new \ReflectionClass($className);
+        $reflectedClass = new \ReflectionClass($this->className);
         $constructor = $reflectedClass->getConstructor();
-        $constructor->invoke($mock, $tagName, $content, $attributes);
+        $constructor->invoke($sut, $tagName, $content, $attributes);
     }
 
-    public function testGetAttributes()
+    #[Test]
+    #[TestDox('Get attributes.')]
+    public function getAttributes(): void
     {
         $tag1 = new Tag('div', ['bla']);
 
@@ -54,7 +55,9 @@ class TagTest extends TestCase
         $this->assertInstanceOf(AttributeList::class, $tag2->getAttributes());
     }
 
-    public function testGetContent()
+    #[Test]
+    #[TestDox('Get content.')]
+    public function getContent(): void
     {
         $tag1 = new Tag('div');
 
@@ -65,7 +68,9 @@ class TagTest extends TestCase
         $this->assertInstanceOf(NodeList::class, $tag2->getContent());
     }
 
-    public function testGetIterator()
+    #[Test]
+    #[TestDox('Get the default iterator.')]
+    public function getIterator(): void
     {
         $tag1 = new Tag('div');
 
@@ -76,7 +81,9 @@ class TagTest extends TestCase
         $this->assertInstanceOf(PreOrderIterator::class, $tag2->getIterator());
     }
 
-    public function testGetIteratorPreOrder()
+    #[Test]
+    #[TestDox('Get the perorder iterator.')]
+    public function getIteratorPreOrder(): void
     {
         $tag1 = new Tag('div');
 
@@ -87,7 +94,9 @@ class TagTest extends TestCase
         $this->assertInstanceOf(PreOrderIterator::class, $tag2->getIteratorPreOrder());
     }
 
-    public function testJsonSerialize()
+    #[Test]
+    #[TestDox('Json serialize.')]
+    public function jsonSerialize(): void
     {
         $nlMock = $this->createMock(NodeList::class);
 
@@ -101,17 +110,14 @@ class TagTest extends TestCase
                 ->method('jsonSerialize')
                 ->willReturn(['class' => 'btn btn-primary']);
 
-        $mock = $this->getMockBuilder(Tag::class)
-                ->setMethods(['getAttributes', 'getContent', 'getTagName'])
-                ->getMock();
-
-        $mock->expects($this->once())
+        $sut = $this->getMockTag(['getAttributes', 'getContent', 'getTagName']);
+        $sut->expects($this->once())
                 ->method('getAttributes')
                 ->willReturn($alMock);
-        $mock->expects($this->once())
+        $sut->expects($this->once())
                 ->method('getContent')
                 ->willReturn($nlMock);
-        $mock->expects($this->once())
+        $sut->expects($this->once())
                 ->method('getTagName')
                 ->willReturn('span');
 
@@ -121,164 +127,219 @@ class TagTest extends TestCase
             'tag' => 'span',
         ];
 
-        $this->assertEquals($expected, json_decode(json_encode($mock), JSON_OBJECT_AS_ARRAY));
+        $this->assertEquals($expected, json_decode(json_encode($sut), JSON_OBJECT_AS_ARRAY));
     }
 
-    public function testSetAttributes()
+    #[Test]
+    #[TestDox('Set attributes.')]
+    public function setAttributes(): void
     {
-        $mock = $this->getMockBuilder(Tag::class)
-                ->setMethods(['setTagName'])
-                ->disableOriginalConstructor()
-                ->getMock();
+        $attributes = ['class' => 'btn btn-primary'];
+        $sut = $this->getMockTag([]);
 
-        $mock->setAttributes(['class' => 'test']);
+        /** @var Tag $sut */
+        $sut->setAttributes($attributes);
 
-        $this->assertInstanceOf(AttributeList::class, $mock->getAttributes());
+        $return = $sut->getAttributes();
+        $this->assertInstanceOf(AttributeList::class, $return);
+        $reflectedClassAttrList = new \ReflectionClass(AttributeList::class);
+        $itemsProperty = $reflectedClassAttrList->getProperty('items');
+        $itemsProperty->setAccessible(true);
+        $items = $itemsProperty->getValue($return);
+        $this->assertCount(1, $items);
     }
 
-    public function testSetAttributesAttributeList()
+    #[Test]
+    #[TestDox('Set attributes with an attribute list.')]
+    public function setAttributesAttributeList(): void
     {
-        $mock = $this->getMockBuilder(Tag::class)
-                ->setMethods(['setTagName'])
-                ->disableOriginalConstructor()
-                ->getMock();
+        $attrList = new AttributeList();
+        $sut = $this->getMockTag([]);
 
-        $mock->setAttributes((new AttributeList()));
+        /** @var Tag $sut */
+        $sut->setAttributes($attrList);
 
-        $this->assertInstanceOf(AttributeList::class, $mock->getAttributes());
+        $this->assertSame($attrList, $sut->getAttributes());
     }
 
-    public function testSetAttributesEmpty()
+    #[Test]
+    #[TestDox('Set attributes with an empty array.')]
+    public function setAttributesEmpty(): void
     {
-        $mock = $this->getMockBuilder(Tag::class)
-                ->setMethods(['setTagName'])
-                ->disableOriginalConstructor()
-                ->getMock();
+        $sut = $this->getMockTag([]);
 
-        $mock->setAttributes([]);
+        /** @var Tag $sut */
+        $sut->setAttributes([]);
 
-        $this->assertInstanceOf(AttributeList::class, $mock->getAttributes());
+        $attrList = $sut->getAttributes();
+        $this->assertInstanceOf(AttributeList::class, $attrList);
+        $this->assertEmpty($attrList);
     }
 
-    public function testSetAttributesWithException()
+    #[Test]
+    #[TestDox('Set content.')]
+    public function setContent(): void
     {
-        $mock = $this->getMockBuilder(Tag::class)
-                ->setMethods(['setTagName'])
-                ->disableOriginalConstructor()
-                ->getMock();
+        $content = ['test text'];
+        $sut = $this->getMockTag([]);
 
-        $this->expectException(\InvalidArgumentException::class);
+        $reflectedClass = new \ReflectionClass($this->className);
+        $tagName = $reflectedClass->getProperty('tagName');
+        $tagName->setAccessible(true);
+        $tagName->setValue($sut, 'div');
 
-        $mock->setAttributes((new NodeList()));
+        /** @var Tag $sut */
+        $sut->setContent($content);
+
+        $return = $sut->getContent();
+        $this->assertInstanceOf(NodeList::class, $return);
+        $reflectedClassNodeList = new \ReflectionClass(NodeList::class);
+        $itemsProperty = $reflectedClassNodeList->getProperty('items');
+        $itemsProperty->setAccessible(true);
+        $items = $itemsProperty->getValue($return);
+        $this->assertCount(1, $items);
+        $this->assertInstanceOf(Text::class, $items[0]);
+        $reflectedClassText = new \ReflectionClass(Text::class);
+        $contentProperty = $reflectedClassText->getProperty('content');
+        $contentProperty->setAccessible(true);
+        $contentFromProperty = $contentProperty->getValue($items[0]);
+        $this->assertSame($content[0], $contentFromProperty);
     }
 
-    public function testSetContent()
+    #[Test]
+    #[TestDox('Set content with an empty array.')]
+    public function setContentEmpty(): void
     {
-        $mock = $this->getMockBuilder(Tag::class)
-                ->setMethods(['setTagName'])
-                ->disableOriginalConstructor()
-                ->getMock();
+        $sut = $this->getMockTag([]);
 
-        $mock->setContent(['test text']);
+        $reflectedClass = new \ReflectionClass($this->className);
+        $tagName = $reflectedClass->getProperty('tagName');
+        $tagName->setAccessible(true);
+        $tagName->setValue($sut, 'div');
 
-        $this->assertInstanceOf(NodeList::class, $mock->getContent());
+        /** @var Tag $sut */
+        $sut->setContent([]);
+
+        $content = $sut->getContent();
+        $this->assertInstanceOf(NodeList::class, $content);
+        $reflectedClass = new \ReflectionClass(NodeList::class);
+        $items = $reflectedClass->getProperty('items');
+        $items->setAccessible(true);
+        $this->assertEmpty($items->getValue($content));
     }
 
-    public function testSetContentEmpty()
+    #[Test]
+    #[TestDox('Set tag name.')]
+    public function setTagName(): void
     {
-        $mock = $this->getMockBuilder(Tag::class)
-                ->setMethods(['setTagName'])
-                ->disableOriginalConstructor()
-                ->getMock();
+        $tagName = 'test';
+        $sut = $this->getMockTag([]);
 
-        $mock->setContent([]);
+        /** @var Tag $sut */
+        $return = $sut->setTagName($tagName);
 
-        $this->assertInstanceOf(NodeList::class, $mock->getContent());
+        $this->assertEquals($tagName, $sut->getTagName());
+        $this->assertSame($sut, $return);
     }
 
-    public function testSetTagName()
+    #[Test]
+    #[TestDox('Set content self closing with an exception.')]
+    public function setContentSelfClosing(): void
     {
-        $mock = $this->getMockBuilder(Tag::class)
-                ->setMethods(['isSelfClosing'])
-                ->disableOriginalConstructor()
-                ->getMock();
-
-        $mock->setTagName('test');
-
-        $this->assertEquals('test', $mock->getTagName());
-    }
-
-    public function testSetTagNameWithException()
-    {
-        $mock = $this->getMockBuilder(Tag::class)
-                ->setMethods(['isSelfClosing'])
-                ->disableOriginalConstructor()
-                ->getMock();
-
-        $this->expectException(\InvalidArgumentException::class);
-
-        $mock->setTagName(123);
-    }
-
-    public function testSetContentSelfClosing()
-    {
-        $mock = $this->getMockBuilder(Tag::class)
-                ->setMethods(['isSelfClosing'])
-                ->disableOriginalConstructor()
-                ->getMock();
-
-        $mock->expects($this->once())
+        $sut = $this->getMockTag(['isSelfClosing']);
+        $sut->expects($this->once())
                 ->method('isSelfClosing')
                 ->willReturn(true);
+
+        $reflectedClass = new \ReflectionClass($this->className);
+        $tagName = $reflectedClass->getProperty('tagName');
+        $tagName->setAccessible(true);
+        $tagName->setValue($sut, 'br');
 
         $this->expectException(\BadMethodCallException::class);
 
-        $mock->setContent(['test text']);
+        /** @var Tag $sut */
+        $sut->setContent(['test text']);
     }
 
-    public function testToString()
+    #[Test]
+    #[TestDox('Type conversion to string.')]
+    public function render(): void
     {
-        $mock = $this->getMockBuilder(Tag::class)
-                ->setMethods(['getAttributes', 'getContent', 'getTagName', 'isSelfClosing'])
+        $tagName = 'div';
+        $attr = 'class="btn btn-primary"';
+        $content = 'test text.';
+        $attrList = $this->getMockAttributeList($attr);
+        $nodeList = $this->getMockBuilder(NodeList::class)
+                ->onlyMethods(['__toString'])
                 ->getMock();
+        $nodeList->expects($this->once())
+                ->method('__toString')
+                ->willReturn($content);
 
-        $mock->expects($this->once())
+        $sut = $this->getMockTag(['getAttributes', 'getContent', 'getTagName', 'isSelfClosing']);
+        $sut->expects($this->once())
                 ->method('getTagName')
-                ->willReturn('div');
-        $mock->expects($this->once())
+                ->willReturn($tagName);
+        $sut->expects($this->once())
                 ->method('getAttributes')
-                ->willReturn('class="btn btn-primary"');
-        $mock->expects($this->once())
+                ->willReturn($attrList);
+        $sut->expects($this->once())
                 ->method('isSelfClosing')
                 ->willReturn(false);
-        $mock->expects($this->once())
+        $sut->expects($this->once())
                 ->method('getContent')
-                ->willReturn('test text.');
+                ->willReturn($nodeList);
 
-        $expected = '<div class="btn btn-primary">test text.</div>';
+        $expected = "<{$tagName} {$attr}>{$content}</{$tagName}>";
 
-        $this->assertEquals($expected, ((string) $mock));
+        $this->assertEquals($expected, ((string) $sut));
     }
 
-    public function testToStringSelfClosing()
+    #[Test]
+    #[TestDox('Type conversion to string as self closing.')]
+    public function toStringSelfClosing(): void
     {
-        $mock = $this->getMockBuilder(Tag::class)
-                ->setMethods(['getAttributes', 'getTagName', 'isSelfClosing'])
-                ->getMock();
+        $tagName = 'br';
+        $attr = 'style="display: none;"';
+        $attrList = $this->getMockAttributeList($attr);
 
-        $mock->expects($this->once())
+        $sut = $this->getMockTag(['getAttributes', 'getContent', 'getTagName', 'isSelfClosing']);
+        $sut->expects($this->once())
                 ->method('getTagName')
-                ->willReturn('br');
-        $mock->expects($this->once())
+                ->willReturn($tagName);
+        $sut->expects($this->once())
                 ->method('getAttributes')
-                ->willReturn('style="display: none;"');
-        $mock->expects($this->once())
+                ->willReturn($attrList);
+        $sut->expects($this->once())
                 ->method('isSelfClosing')
                 ->willReturn(true);
+        $sut->expects($this->never())
+                ->method('getContent');
 
-        $expected2 = '<br style="display: none;" />';
+        $expected = "<{$tagName} {$attr} />";
 
-        $this->assertEquals($expected2, ((string) $mock));
+        $this->assertEquals($expected, ((string) $sut));
+    }
+
+    final private function getMockAttributeList(string $attr = ''): MockObject
+    {
+        $attrList = $this->getMockBuilder(AttributeList::class)
+                ->onlyMethods(['__toString'])
+                ->getMock();
+        $attrList->expects($this->once())
+                ->method('__toString')
+                ->willReturn($attr);
+        
+        return $attrList;
+    }
+
+    final private function getMockTag(array $methods = []): MockObject
+    {
+        return $this->getMockBuilder(Tag::class)
+                ->onlyMethods($methods)
+                ->disableOriginalConstructor()
+                ->getMock();
     }
 
 }

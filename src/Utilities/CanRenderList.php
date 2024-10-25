@@ -10,14 +10,12 @@ use \Ht7\Base\Exceptions\InvalidDatatypeException;
  */
 trait CanRenderList
 {
-
-    protected $divider;
+    protected $divider = '';
 
     public function getDivider()
     {
         return $this->divider;
     }
-
     public function setDivider($divider)
     {
         if (is_string($divider)) {
@@ -26,10 +24,8 @@ trait CanRenderList
             throw new InvalidDatatypeException('divider', $divider, ['string']);
         }
     }
-
     public function __toString()
     {
         return implode($this->getDivider(), $this->getAll());
     }
-
 }

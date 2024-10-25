@@ -23,7 +23,9 @@ final class ImporterArrayTest extends TestCase
     {
         parent::setUp();
 
-        $this->importer = ImporterArray::getInstance();
+
+        $this->importer = new ImporterArray();
+        ImporterArray::setInstance($this->importer);
     }
 
     public function testCreateTag()
